@@ -24,8 +24,9 @@ public class Bootstrapper {
 
 		// Bootstrapper code here
 		try {
-			Utils.log(CLASS_NAME, "Creating SOCKSProxy instance...", false);
+			Utils.log(CLASS_NAME, "Initializing SOCKSProxy instance...", false);
 			socksProxy = new SOCKSProxy();
+			socksProxy.init();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

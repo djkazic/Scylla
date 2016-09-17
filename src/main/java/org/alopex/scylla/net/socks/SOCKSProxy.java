@@ -25,6 +25,7 @@ public class SOCKSProxy {
 			Utils.log(this, "Starting proxy thread...", false);
 			(new Thread(new Runnable() {
 				public void run() {
+					Utils.log(this, "Proxy thread started.", false);
 					while(true) {
 						try {
 							threadSelect.select(1000);
