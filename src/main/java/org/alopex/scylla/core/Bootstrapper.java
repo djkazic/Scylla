@@ -16,6 +16,7 @@ public class Bootstrapper {
 	public static ArrayList<Peer> peers;
 	public static String selfMutex;
 
+	public static Config config;
 	public static SOCKSProxy socksProxy;
 
 	public static void main(String[] args) {
