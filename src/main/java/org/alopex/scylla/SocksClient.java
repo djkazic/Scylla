@@ -14,6 +14,7 @@ public class SocksClient {
 	SocketChannel remoteSocketChannel;
 	boolean connected;
 	long lastData = 0;
+	Peer peer;
 
 	/**
 	 * Local SocketClient
