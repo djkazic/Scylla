@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Bootstrapper {
 
 	public static ArrayList<Peer> peers;
+	public static String selfMutex;
 
 	public static void main(String[] args) {
 		// Instance var instantiation segment
