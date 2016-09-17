@@ -10,6 +10,8 @@ public class Peer {
 	private Connection connection;
 	private String mutex;
 	private int direction;
+
+	private RSA rsa;
 	private AES aes;
 
 	public Peer(Connection connection, int direction) {
@@ -66,6 +68,10 @@ public class Peer {
 
 	public int getDirection() {
 		return direction;
+	}
+
+	public RSA getRSA() {
+		return rsa;
 	}
 
 	public AES getAES() {
