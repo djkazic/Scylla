@@ -1,6 +1,7 @@
 package org.alopex.scylla.net.socks;
 
 import org.alopex.scylla.net.p2p.Peer;
+import org.alopex.scylla.utils.Utils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 public class SocksClient {
 	SocketChannel clientSocketChannel;
@@ -139,6 +141,7 @@ public class SocksClient {
 					throw new IOException("Client disconnected");
 				lastData = System.currentTimeMillis();
 				buf.flip();
+				Utils.log(this, "HOOKED FOR OUTBOUND DATA: " + Arrays.toString(buf.array()), false);
 				remoteSocketChannel.write(buf);
 			} else {
 				System.out.println("Invalid override call for newOutboundData()");

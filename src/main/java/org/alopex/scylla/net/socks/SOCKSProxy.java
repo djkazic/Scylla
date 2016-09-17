@@ -12,6 +12,11 @@ import java.util.Set;
 public class SOCKSProxy {
 	public static ArrayList <SocksClient> clients = new ArrayList<SocksClient>();
 
+	public static void main(String[] args) {
+		SOCKSProxy sp = new SOCKSProxy();
+		sp.init();
+	}
+
 	private ServerSocketChannel socks;
 
 	public void init() {
