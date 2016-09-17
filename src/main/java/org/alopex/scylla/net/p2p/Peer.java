@@ -76,6 +76,6 @@ public class Peer {
 	}
 
 	public AES getAES() {
-		return AES;
+		return aes;
 	}
 }
