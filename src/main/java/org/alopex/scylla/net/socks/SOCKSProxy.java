@@ -1,5 +1,7 @@
 package org.alopex.scylla.net.socks;
 
+import org.alopex.scylla.utils.Utils;
+
 import java.nio.channels.*;
 import java.io.*;
 import java.net.*;
@@ -20,6 +22,7 @@ public class SOCKSProxy {
 			final Selector threadSelect = Selector.open();
 			socks.register(threadSelect, SelectionKey.OP_ACCEPT);
 
+			Utils.log(this, "Starting proxy thread...", false);
 			(new Thread(new Runnable() {
 				public void run() {
 					while(true) {
