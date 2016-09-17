@@ -78,17 +78,20 @@ public class NetBootstrapper {
 	}
 
 	public void registerClientListeners(Client client) {
+		registerClasses(client.getKryo());
 		Utils.log(this, "Registering client listeners...", false);
 		client.addListener(new DualListener(0));
 		client.start();
 	}
 
 	public void registerServerListeners(Server server) {
+		registerClasses(server.getKryo());
 		Utils.log(this, "Registering server listeners...", false);
 		server.addListener(new DualListener(1));
+		// DO NOT CALL server.start()
 	}
 
-	private void registerClass(Kryo kryo) {
+	private void registerClasses(Kryo kryo) {
 		// Main Data object
 		kryo.register(Data.class);
 	}
