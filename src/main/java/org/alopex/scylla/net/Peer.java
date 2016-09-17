@@ -12,6 +12,7 @@ public class Peer {
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
 		this.direction = direction;
+		addToPeerList();
 	}
 
 	private void addToPeerList() {
