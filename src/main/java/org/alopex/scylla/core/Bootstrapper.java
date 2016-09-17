@@ -1,5 +1,6 @@
 package org.alopex.scylla.core;
 
+import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.net.NetBootstrapper;
 import org.alopex.scylla.net.p2p.Peer;
 import org.alopex.scylla.net.socks.SOCKSProxy;
@@ -17,6 +18,7 @@ public class Bootstrapper {
 
 	public static ArrayList<Peer> peers;
 	public static String selfUUID;
+	public static RSA rsa;
 
 	//TODO: change to dynamically loaded Config
 	public static Config config = new Config();
@@ -25,11 +27,13 @@ public class Bootstrapper {
 	public static NetBootstrapper netBootstrapper;
 
 	public static void main(String[] args) {
-		// Instance var instantiation segment
-		peers = new ArrayList<Peer> ();
 
 		// Bootstrapper code here
 		try {
+			// Instance var instantiation segment
+			peers = new ArrayList<Peer> ();
+			rsa = new RSA();
+
 			Utils.log(CLASS_NAME, "Generating self UUID...", false);
 			selfUUID = UUID.randomUUID().toString();
 

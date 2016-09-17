@@ -2,6 +2,10 @@ package org.alopex.scylla.net.p2p;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.crypto.RSA;
+import org.alopex.scylla.net.packets.Data;
+import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
 
 import java.util.concurrent.ExecutorService;
@@ -38,6 +42,78 @@ public class DualListener extends Listener {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	public void received(final Connection connection, Object object) {
+		final Peer foundPeer = Peer.findPeer(connection);
+		final Data dataObject = (Data) object;
+		final byte type = dataObject.getType();
+
+		if ((int) ((float) type % 2) == 0) {
+			Utils.log(this, "DATA RECV from remote peer: " + foundPeer.getUuid(), false);
+			switch (type) {
+				case DataTypes.PUBKEY_DATA:
+					Utils.log(this, "RECV DATA for PUBKEY_DATA", false);
+					replyPool.execute(new Runnable() {
+						public void run() {
+							String recvPubKey = (String) dataObject.getPayload();
+							if (foundPeer.setPubKey(recvPubKey)) {
+								foundPeer.getPubKeyRecvLatch().countDown();
+							}
+						}
+					});
+					break;
+
+				case DataTypes.UUID_DATA:
+					Utils.log(this, "RECV DATA for UUID_DATA", false);
+					replyPool.execute(new Runnable() {
+						public void run() {
+							String encryptedUUID = (String) dataObject.getPayload();
+							try {
+								String uuid = Bootstrapper.rsa.decrypt(encryptedUUID);
+								// Update foundPeer
+								Peer bridgeFoundPeer = foundPeer;
+								int attemptsToFindPeer = 0;
+								while (bridgeFoundPeer == null && attemptsToFindPeer <= 5) {
+									bridgeFoundPeer = Peer.findPeer(connection);
+									Thread.sleep(100);
+									attemptsToFindPeer++;
+								}
+								bridgeFoundPeer.setUuid(uuid);
+								bridgeFoundPeer.getUuidRecvLatch().countDown();
+							} catch (Exception ex) {
+								Utils.log(this, "Failed to set UUID", false);
+								ex.printStackTrace();
+							}
+						}
+					});
+					break;
+			}
+		} else {
+			Utils.log(this, "REQ RECV from remote peer: " + foundPeer.getUuid(), false);
+
+			switch (type) {
+				case DataTypes.PUBKEY_REQS:
+					Utils.log(this, "RECV REQ for PUBKEY_DATA", false);
+					replyPool.execute(new Runnable() {
+						public void run() {
+							connection.sendTCP(new Data(DataTypes.PUBKEY_DATA, RSA.pubKey));
+							Utils.log(this, "\tSent pubKey back", false);
+						}
+					});
+					break;
+
+				case DataTypes.UUID_REQS:
+					Utils.log(this, "RECV REQ for UUID_DATA", false);
+					replyPool.execute(new Runnable() {
+						public void run() {
+							connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.selfUUID));
+							Utils.log(this, "\tSent UUID back", false);
+						}
+					});
+					break;
+			}
 		}
 	}
 

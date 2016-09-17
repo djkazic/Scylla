@@ -4,7 +4,15 @@ import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.AES;
 import org.alopex.scylla.crypto.RSA;
+import org.alopex.scylla.net.packets.Data;
+import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
+
+import javax.xml.bind.DatatypeConverter;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.concurrent.CountDownLatch;
 
 public class Peer {
 
@@ -12,18 +20,69 @@ public class Peer {
 	private String uuid;
 	private int direction;
 
-	private RSA rsa;
+	private CountDownLatch pubKeyRecvLatch;
+	private CountDownLatch uuidRecvLatch;
+	private CountDownLatch deferredRecvLatch;
+
+	private PublicKey pubKey;
 	private AES aes;
 
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
 		this.direction = direction;
+
+		pubKeyRecvLatch = new CountDownLatch(1);
+		uuidRecvLatch = new CountDownLatch(1);
+		deferredRecvLatch = new CountDownLatch(1);
+
 		uuidCheck();
 		addToPeerList();
 	}
 
 	private void addToPeerList() {
 		Bootstrapper.peers.add(this);
+	}
+
+	private void bootstrapHandshake() {
+		Runnable bootstrapHandshakeThreadRunnable = new Runnable() {
+			public void run() {
+				try {
+					if (direction == 1) {
+						Utils.log(this, "Sending our pubkey first...", false);
+						connection.sendTCP(new Data(DataTypes.PUBKEY_DATA, RSA.pubKey));
+
+						Utils.log(this, "Requesting remote peer's pubkey...", false);
+						connection.sendTCP(new Data(DataTypes.PUBKEY_REQS, null));
+
+						Utils.log(this, "Waiting for remote pubkey...", false);
+						pubKeyRecvLatch.await();
+
+						Utils.log(this, "Requesting remote peer's UUID...", false);
+						connection.sendTCP(new Data(DataTypes.UUID_REQS, null));
+
+						Utils.log(this, "Waiting for remote peer's UUID...", false);
+						uuidRecvLatch.await();
+
+						Utils.log(this, "Initializing local AES...", false);
+						aes = new AES(uuid);
+					} else {
+						pubKeyRecvLatch.await();
+						deferredRecvLatch.await();
+						Utils.log(this, "Requesting remote peer's UUID...", false);
+
+						Utils.log(this, "Waiting for remote peer's UUID...", false);
+						uuidRecvLatch.await();
+
+						Utils.log(this, "Initializing local AES...", false);
+						aes = new AES(uuid);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		};
+		Thread bootstrapHandshakeThread = new Thread(bootstrapHandshakeThreadRunnable);
+		bootstrapHandshakeThread.start();
 	}
 
 	public boolean uuidCheck() {
@@ -60,6 +119,19 @@ public class Peer {
 		}
 	}
 
+	public boolean setPubKey(String pubkey) {
+		try {
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(DatatypeConverter.parseBase64Binary(pubkey));
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			PublicKey pk = kf.generatePublic(keySpec);
+			this.pubKey = pk;
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+
 	public Connection getConnection() {
 		return connection;
 	}
@@ -68,16 +140,24 @@ public class Peer {
 		return uuid;
 	}
 
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	public int getDirection() {
 		return direction;
 	}
 
-	public RSA getRSA() {
-		return rsa;
-	}
-
 	public AES getAES() {
 		return aes;
+	}
+
+	public CountDownLatch getPubKeyRecvLatch() {
+		return pubKeyRecvLatch;
+	}
+
+	public CountDownLatch getUuidRecvLatch() {
+		return uuidRecvLatch;
 	}
 
 	public static Peer findPeer(Connection connection) {
