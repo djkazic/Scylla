@@ -11,4 +11,7 @@ public class DataTypes {
 	public static final byte UUID_REQS = 0x03;
 	public static final byte UUID_DATA = 0x04;
 
+	public static final byte ARTICHOKE_REQS = 0x05;
+	public static final byte ARTICHOKE_DATA = 0x06;
+
 }
