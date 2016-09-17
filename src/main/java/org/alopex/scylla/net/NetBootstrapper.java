@@ -5,12 +5,57 @@ import com.esotericsoftware.kryonet.Server;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.utils.Utils;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Kevin Cai on 9/17/2016.
  */
 public class NetBootstrapper {
 
+	public static List<InetAddress> foundHosts;
+
 	private Server server;
+
+	public NetBootstrapper() { }
+
+	public void init() {
+		try {
+			Utils.log(this, "Creating server / starting listeners...", false);
+			createServer();
+
+			Utils.log(this, "Creating test connections...", false);
+			foundHosts = new ArrayList<InetAddress>();
+			foundHosts.add(InetAddress.getByName("18.22.8.190"));
+
+			Utils.log(this, "Attempting to open test connections...", false);
+			attemptConnections();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private void attemptConnections() {
+		try {
+			Client newConnection = null;
+			for (int i=0; i < foundHosts.size(); i++) {
+				InetAddress ia = foundHosts.get(i);
+				try {
+					Utils.log(this, "Attempting connect to " + ia.getHostAddress(), false);
+					newConnection = createClient();
+					newConnection.connect(8000, ia, Bootstrapper.config.tcpPort);
+				} catch (Exception ex) {
+					Utils.log(this, "Connection to " + ia.getHostAddress() + " failed", false);
+					newConnection.close();
+					System.gc();
+				}
+				Thread.sleep(1000);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	public Client createClient() {
 		Client client = new Client(512000 * 6, 512000 * 5);
