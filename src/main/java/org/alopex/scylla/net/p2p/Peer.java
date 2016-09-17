@@ -9,7 +9,7 @@ import org.alopex.scylla.utils.Utils;
 public class Peer {
 
 	private Connection connection;
-	private String mutex;
+	private String uuid;
 	private int direction;
 
 	private RSA rsa;
@@ -18,6 +18,7 @@ public class Peer {
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
 		this.direction = direction;
+		uuidCheck();
 		addToPeerList();
 	}
 
@@ -25,16 +26,16 @@ public class Peer {
 		Bootstrapper.peers.add(this);
 	}
 
-	public boolean mutexCheck() {
-		if (mutex.equals(Bootstrapper.selfMutex)) {
-			Utils.log(this, "Duplicate mutex against self: " + mutex, false);
+	public boolean uuidCheck() {
+		if (uuid.equals(Bootstrapper.selfUUID)) {
+			Utils.log(this, "Duplicate UUID against self: " + uuid, false);
 			disconnect();
 			return false;
 		} else {
 			boolean passed = true;
 			for (Peer peer : Bootstrapper.peers) {
-				if (peer != this && peer.getMutex() != null && peer.getMutex().equals(mutex)) {
-					Utils.log(this, "Duplicate mutex: " + mutex, false);
+				if (peer != this && peer.getUuid() != null && peer.getUuid().equals(uuid)) {
+					Utils.log(this, "Duplicate UUID: " + uuid, false);
 					passed = false;
 					break;
 				}
@@ -52,10 +53,10 @@ public class Peer {
 		Bootstrapper.peers.remove(this);
 		int connNumber = connection.getID();
 		connection.close();
-		if (mutex != null) {
-			Utils.log(this, "Peer " + mutex + " disconnected", false);
+		if (uuid != null) {
+			Utils.log(this, "Peer " + uuid + " disconnected", false);
 		} else {
-			Utils.log(this, "Peer disconnected (mutex null for connection [" + connNumber + "])", false);
+			Utils.log(this, "Peer disconnected (uuid null for connection [" + connNumber + "])", false);
 		}
 	}
 
@@ -63,8 +64,8 @@ public class Peer {
 		return connection;
 	}
 
-	public String getMutex() {
-		return mutex;
+	public String getUuid() {
+		return uuid;
 	}
 
 	public int getDirection() {

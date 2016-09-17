@@ -6,6 +6,7 @@ import org.alopex.scylla.net.socks.SOCKSProxy;
 import org.alopex.scylla.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Kevin Cai on 9/17/2016.
@@ -15,7 +16,7 @@ public class Bootstrapper {
 	private static final String CLASS_NAME = "Bootstrapper";
 
 	public static ArrayList<Peer> peers;
-	public static String selfMutex;
+	public static String selfUUID;
 
 	//TODO: change to dynamically loaded Config
 	public static Config config = new Config();
@@ -29,6 +30,9 @@ public class Bootstrapper {
 
 		// Bootstrapper code here
 		try {
+			Utils.log(CLASS_NAME, "Generating self UUID...", false);
+			selfUUID = UUID.randomUUID().toString();
+
 			Utils.log(CLASS_NAME, "Initializing SOCKSProxy instance...", false);
 			socksProxy = new SOCKSProxy();
 			socksProxy.init();
