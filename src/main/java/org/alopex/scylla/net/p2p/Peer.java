@@ -28,7 +28,7 @@ public class Peer {
 	public boolean mutexCheck() {
 		if (mutex.equals(Bootstrapper.selfMutex)) {
 			Utils.log(this, "Duplicate mutex against self: " + mutex, false);
-			//disconnect();
+			disconnect();
 			return false;
 		} else {
 			boolean passed = true;
@@ -77,5 +77,14 @@ public class Peer {
 
 	public AES getAES() {
 		return aes;
+	}
+
+	public static Peer findPeer(Connection connection) {
+		for (Peer peer : Bootstrapper.peers) {
+			if (peer.getConnection().equals(connection)) {
+				return peer;
+			}
+		}
+		return null;
 	}
 }
