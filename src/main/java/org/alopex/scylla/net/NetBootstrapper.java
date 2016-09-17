@@ -19,12 +19,16 @@ public class NetBootstrapper {
 	}
 
 	public void createServer() {
-		server = new Server(512000 * 6, 512000 * 5);
-		registerServerListeners(server);
+		try {
+			server = new Server(512000 * 6, 512000 * 5);
+			registerServerListeners(server);
 
-		Utils.log(this, "Starting server component", false);
-		server.bind(Bootstrapper.config.tcpPort);
-		server.start();
+			Utils.log(this, "Starting server component", false);
+			server.bind(Bootstrapper.config.tcpPort);
+			server.start();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void registerClientListeners(Client client) {
@@ -35,7 +39,7 @@ public class NetBootstrapper {
 
 	}
 
-	public void getServer() {
+	public Server getServer() {
 		return server;
 	}
 }
