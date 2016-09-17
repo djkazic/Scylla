@@ -22,7 +22,6 @@ public class Peer {
 
 	private CountDownLatch pubKeyRecvLatch;
 	private CountDownLatch uuidRecvLatch;
-	private CountDownLatch deferredRecvLatch;
 
 	private PublicKey pubKey;
 	private AES aes;
@@ -33,7 +32,6 @@ public class Peer {
 
 		pubKeyRecvLatch = new CountDownLatch(1);
 		uuidRecvLatch = new CountDownLatch(1);
-		deferredRecvLatch = new CountDownLatch(1);
 
 		addToPeerList();
 		bootstrapHandshake();
@@ -54,7 +52,7 @@ public class Peer {
 						Utils.log(this, "Requesting remote peer's pubkey...", false);
 						connection.sendTCP(new Data(DataTypes.PUBKEY_REQS, null));
 
-						Utils.log(this, "Waiting for remote pubkey...", false);
+						Utils.log(this, "Waiting for remote peer's pubkey...", false);
 						pubKeyRecvLatch.await();
 
 						Utils.log(this, "Requesting remote peer's UUID...", false);
@@ -66,8 +64,9 @@ public class Peer {
 						Utils.log(this, "Initializing local AES...", false);
 						aes = new AES(uuid);
 					} else {
+						Utils.log(this, "Waiting for remote peer's pubkey...", false);
 						pubKeyRecvLatch.await();
-						//deferredRecvLatch.await();
+
 						Utils.log(this, "Requesting remote peer's UUID...", false);
 
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
@@ -78,7 +77,9 @@ public class Peer {
 					}
 					Utils.log(this, "Handshake complete!\n", false);
 					Utils.log(this, "Checking UUID...", false);
-					uuidCheck();
+					if (uuidCheck()) {
+						Utils.log(this, "Ready for data Tx/Rx.", false);
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -102,7 +103,7 @@ public class Peer {
 					break;
 				}
 			}
-			
+
 			if (passed) {
 				Utils.log(this, "UUID check passed!", false);
 				return true;
