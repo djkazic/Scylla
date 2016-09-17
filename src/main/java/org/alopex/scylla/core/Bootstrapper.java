@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Bootstrapper {
 
-	private static final String CLASS_NAME =  "Bootstrapper";
+	private static final String CLASS_NAME = "Bootstrapper";
 
 	public static ArrayList<Peer> peers;
 	public static String selfMutex;
