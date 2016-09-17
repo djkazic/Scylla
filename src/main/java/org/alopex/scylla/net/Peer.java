@@ -2,6 +2,7 @@ package org.alopex.scylla.net;
 
 import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.crypto.AES;
 import org.alopex.scylla.utils.Utils;
 
 public class Peer {
@@ -9,6 +10,7 @@ public class Peer {
 	private Connection connection;
 	private String mutex;
 	private int direction;
+	private AES aes;
 
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
@@ -64,5 +66,9 @@ public class Peer {
 
 	public int getDirection() {
 		return direction;
+	}
+
+	public AES getAES() {
+		return AES;
 	}
 }
