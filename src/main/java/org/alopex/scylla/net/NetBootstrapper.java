@@ -1,9 +1,11 @@
 package org.alopex.scylla.net;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.net.p2p.DualListener;
+import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.utils.Utils;
 
 import java.net.InetAddress;
@@ -84,6 +86,11 @@ public class NetBootstrapper {
 	public void registerServerListeners(Server server) {
 		Utils.log(this, "Registering server listeners...", false);
 		server.addListener(new DualListener(1));
+	}
+
+	private void registerClass(Kryo kryo) {
+		// Main Data object
+		kryo.register(Data.class);
 	}
 
 	public Server getServer() {
