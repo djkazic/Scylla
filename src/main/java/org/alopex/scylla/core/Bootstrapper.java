@@ -1,6 +1,6 @@
 package org.alopex.scylla.core;
 
-import org.alopex.scylla.net.Peer;
+import org.alopex.scylla.net.p2p.Peer;
 
 import java.util.ArrayList;
 

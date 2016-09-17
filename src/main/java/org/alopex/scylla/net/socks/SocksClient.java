@@ -1,6 +1,6 @@
-package org.alopex.scylla;
+package org.alopex.scylla.net.socks;
 
-import org.alopex.scylla.net.Peer;
+import org.alopex.scylla.net.p2p.Peer;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -18,21 +18,13 @@ public class SocksClient {
 	long lastData = 0;
 	Peer peer;
 
-	/**
-	 * Local SocketClient
-	 * @param c
-	 * @throws IOException
-	 */
 	public SocksClient(SocketChannel c) throws IOException {
 		clientSocketChannel = c;
 		clientSocketChannel.configureBlocking(false);
 		lastData = System.currentTimeMillis();
 	}
 
-	/**
-	 * Exit SocketClient
-	 * @param p
-	 */
+	// Special SocksClient for exit nodes
 	public SocksClient(Peer p) {
 		peer = p;
 	}

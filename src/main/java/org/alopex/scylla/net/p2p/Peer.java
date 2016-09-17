@@ -1,8 +1,9 @@
-package org.alopex.scylla.net;
+package org.alopex.scylla.net.p2p;
 
 import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.AES;
+import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.utils.Utils;
 
 public class Peer {

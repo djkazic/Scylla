@@ -1,4 +1,4 @@
-package org.alopex.scylla;
+package org.alopex.scylla.net.socks;
 
 import java.nio.channels.*;
 import java.io.*;
