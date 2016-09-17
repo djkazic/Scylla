@@ -35,7 +35,6 @@ public class Peer {
 		uuidRecvLatch = new CountDownLatch(1);
 		deferredRecvLatch = new CountDownLatch(1);
 
-		uuidCheck();
 		addToPeerList();
 	}
 
@@ -63,6 +62,8 @@ public class Peer {
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
 						uuidRecvLatch.await();
 
+						uuidCheck();
+
 						Utils.log(this, "Initializing local AES...", false);
 						aes = new AES(uuid);
 					} else {
@@ -72,6 +73,8 @@ public class Peer {
 
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
 						uuidRecvLatch.await();
+
+						uuidCheck();
 
 						Utils.log(this, "Initializing local AES...", false);
 						aes = new AES(uuid);
