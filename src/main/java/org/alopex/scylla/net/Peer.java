@@ -18,4 +18,16 @@ public class Peer {
 	private void addToPeerList() {
 		Bootstrapper.peers.add(this);
 	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public String getMutex() {
+		return mutex;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
 }
