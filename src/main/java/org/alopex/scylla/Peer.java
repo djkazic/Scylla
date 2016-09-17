@@ -1,6 +1,7 @@
 package org.alopex.scylla;
 
 import com.esotericsoftware.kryonet.Connection;
+import org.alopex.scylla.core.Bootstrapper;
 
 public class Peer {
 
@@ -11,5 +12,9 @@ public class Peer {
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
 		this.direction = direction;
+	}
+
+	private void addToPeerList() {
+		Bootstrapper.peers.add(this);
 	}
 }
