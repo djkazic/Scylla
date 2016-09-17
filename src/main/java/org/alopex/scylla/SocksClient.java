@@ -1,5 +1,7 @@
 package org.alopex.scylla;
 
+import org.alopex.scylla.net.Peer;
+
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.InetAddress;

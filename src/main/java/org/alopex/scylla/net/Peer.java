@@ -1,4 +1,4 @@
-package org.alopex.scylla;
+package org.alopex.scylla.net;
 
 import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.core.Bootstrapper;
