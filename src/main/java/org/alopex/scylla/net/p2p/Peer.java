@@ -63,23 +63,22 @@ public class Peer {
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
 						uuidRecvLatch.await();
 
-						uuidCheck();
-
 						Utils.log(this, "Initializing local AES...", false);
 						aes = new AES(uuid);
 					} else {
 						pubKeyRecvLatch.await();
-						deferredRecvLatch.await();
+						//deferredRecvLatch.await();
 						Utils.log(this, "Requesting remote peer's UUID...", false);
 
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
 						uuidRecvLatch.await();
 
-						uuidCheck();
-
 						Utils.log(this, "Initializing local AES...", false);
 						aes = new AES(uuid);
 					}
+					Utils.log(this, "Handshake complete!\n", false);
+					Utils.log(this, "Checking UUID...", false);
+					uuidCheck();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

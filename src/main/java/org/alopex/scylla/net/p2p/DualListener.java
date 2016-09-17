@@ -52,7 +52,7 @@ public class DualListener extends Listener {
 			final byte type = dataObject.getType();
 
 			if ((int) ((float) type % 2) == 0) {
-				Utils.log(this, "DATA RECV from remote peer: " + foundPeer.getUuid(), false);
+				Utils.log(this, "DATA RECV from remote peer: CID @ " + foundPeer.getConnection().getID(), false);
 				switch (type) {
 					case DataTypes.PUBKEY_DATA:
 						Utils.log(this, "RECV DATA for PUBKEY_DATA", false);
