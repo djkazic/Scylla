@@ -17,7 +17,8 @@ public class Bootstrapper {
 	public static ArrayList<Peer> peers;
 	public static String selfMutex;
 
-	public static Config config;
+	//TODO: change to dynamically loaded Config
+	public static Config config = new Config();
 	public static SOCKSProxy socksProxy;
 
 	public static void main(String[] args) {

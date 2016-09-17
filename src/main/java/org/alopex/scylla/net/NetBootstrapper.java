@@ -18,8 +18,6 @@ public class NetBootstrapper {
 
 	private Server server;
 
-	public NetBootstrapper() { }
-
 	public void init() {
 		try {
 			Utils.log(this, "Creating server / starting listeners...", false);
@@ -81,7 +79,7 @@ public class NetBootstrapper {
 	}
 
 	public void registerServerListeners(Server server) {
-
+		Utils.log(this, "Registering server listeners...", false);
 	}
 
 	public Server getServer() {
