@@ -152,6 +152,10 @@ public class Peer {
 		return direction;
 	}
 
+	public PublicKey getPubKey() {
+		return pubKey;
+	}
+
 	public AES getAES() {
 		return aes;
 	}

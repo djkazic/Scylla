@@ -109,7 +109,7 @@ public class DualListener extends Listener {
 						Utils.log(this, "RECV REQ for UUID_DATA", false);
 						replyPool.execute(new Runnable() {
 							public void run() {
-								connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.selfUUID));
+								connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.rsa.encrypt(Bootstrapper.selfUUID, foundPeer.getPubKey())));
 								Utils.log(this, "\tSent UUID back", false);
 							}
 						});
