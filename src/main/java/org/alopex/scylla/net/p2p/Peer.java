@@ -102,7 +102,9 @@ public class Peer {
 					break;
 				}
 			}
+			
 			if (passed) {
+				Utils.log(this, "UUID check passed!", false);
 				return true;
 			} else {
 				disconnect();
