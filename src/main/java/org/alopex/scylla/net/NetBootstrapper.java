@@ -3,6 +3,7 @@ package org.alopex.scylla.net;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.net.p2p.DualListener;
 import org.alopex.scylla.utils.Utils;
 
 import java.net.InetAddress;
@@ -75,11 +76,14 @@ public class NetBootstrapper {
 	}
 
 	public void registerClientListeners(Client client) {
-
+		Utils.log(this, "Registering client listeners...", false);
+		client.addListener(new DualListener(0));
+		client.start();
 	}
 
 	public void registerServerListeners(Server server) {
 		Utils.log(this, "Registering server listeners...", false);
+		server.addListener(new DualListener(1));
 	}
 
 	public Server getServer() {

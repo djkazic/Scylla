@@ -21,6 +21,8 @@ public class Bootstrapper {
 	public static Config config = new Config();
 	public static SOCKSProxy socksProxy;
 
+	public static NetBootstrapper netBootstrapper;
+
 	public static void main(String[] args) {
 		// Instance var instantiation segment
 		peers = new ArrayList<Peer> ();
@@ -32,8 +34,8 @@ public class Bootstrapper {
 			socksProxy.init();
 
 			Utils.log(CLASS_NAME, "Bootstrapping P2P networking engine...", false);
-			NetBootstrapper nb = new NetBootstrapper();
-			nb.init();
+			netBootstrapper = new NetBootstrapper();
+			netBootstrapper.init();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
