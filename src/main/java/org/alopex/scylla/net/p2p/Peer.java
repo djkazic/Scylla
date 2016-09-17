@@ -36,6 +36,7 @@ public class Peer {
 		deferredRecvLatch = new CountDownLatch(1);
 
 		addToPeerList();
+		bootstrapHandshake();
 	}
 
 	private void addToPeerList() {
