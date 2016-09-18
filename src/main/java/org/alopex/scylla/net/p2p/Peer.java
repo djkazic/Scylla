@@ -140,8 +140,10 @@ public class Peer {
 
 	public void disconnect() {
 		Bootstrapper.peers.remove(this);
-		chat.shutdown();
-		chat = null;
+		if (chat != null) {
+			chat.shutdown();
+			chat = null;
+		}
 		int connNumber = connection.getID();
 		connection.close();
 		if (uuid != null) {
