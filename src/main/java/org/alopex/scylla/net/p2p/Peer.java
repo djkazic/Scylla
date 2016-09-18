@@ -57,6 +57,7 @@ public class Peer {
 						Utils.log(this, "Waiting for remote peer's pubkey...", false);
 						pubKeyRecvLatch.await();
 
+						Thread.sleep(150);
 						Utils.log(this, "Requesting remote peer's UUID...", false);
 						connection.sendTCP(new Data(DataTypes.UUID_REQS, null));
 
@@ -69,6 +70,7 @@ public class Peer {
 						Utils.log(this, "Waiting for remote peer's pubkey...", false);
 						pubKeyRecvLatch.await();
 
+						Thread.sleep(150);
 						Utils.log(this, "Requesting remote peer's UUID...", false);
 						connection.sendTCP(new Data(DataTypes.UUID_REQS, null));
 
