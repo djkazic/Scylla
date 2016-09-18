@@ -71,6 +71,7 @@ public class SOCKSProxy {
 											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel) {
 												thisClient.newInboundData(null);
 											}
+											Utils.log(this, "DEBUG REMOTESC: " + thisClient.remoteSocketChannel.toString(), false);
 										} catch (Exception e) {
 											//TODO: objectify SocksClient MORE
 											thisClient.clientSocketChannel.close();
