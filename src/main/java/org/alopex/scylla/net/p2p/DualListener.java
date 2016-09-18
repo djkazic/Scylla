@@ -8,7 +8,6 @@ import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

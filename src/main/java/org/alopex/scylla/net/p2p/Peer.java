@@ -70,6 +70,7 @@ public class Peer {
 						pubKeyRecvLatch.await();
 
 						Utils.log(this, "Requesting remote peer's UUID...", false);
+						connection.sendTCP(new Data(DataTypes.UUID_REQS, null));
 
 						Utils.log(this, "Waiting for remote peer's UUID...", false);
 						uuidRecvLatch.await();
