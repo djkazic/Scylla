@@ -29,7 +29,7 @@ public class NetBootstrapper {
 
 			Utils.log(this, "Creating test connections...", false);
 			foundHosts = new ArrayList<InetAddress>();
-			foundHosts.add(InetAddress.getByName("18.22.8.10"));
+			foundHosts.add(InetAddress.getByName("18.22.8.150"));
 
 			Utils.log(this, "Attempting to open test connections...", false);
 			attemptConnections();

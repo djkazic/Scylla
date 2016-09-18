@@ -26,3 +26,4 @@ cache-bin/
 # PDT-specific
 .buildpath
 *.iml___jb_tmp___
+out/artifacts/scylla_jar/scylla.jar

@@ -86,7 +86,21 @@ public class Peer {
 						Utils.log(this, "Ready for data Tx/Rx.", false);
 						chat = new Chat(connection);
 						Utils.log(this, "Booted up chat connection", false);
-						Utils.log(this, "Initializing...\n>>>", false);
+						Utils.log(this, "Initializing...\n\n", false);
+						System.out.println();
+						System.out.println("                                      /|\n" +
+								"                                     |\\|\n" +
+								"                                     |||\n" +
+								"                                     |||\n" +
+								"                                     |||\n" +
+								"      Remember                       |||\n" +
+								"      The Sword of                   |||\n" +
+								"      Damocles                       |||\n" +
+								"                                  ~-[{o}]-~\n" +
+								"                                     |/|\n" +
+								"                                     |/|\n" +
+								"                                     `0'");
+						System.out.print("\n$>>> ");
 						chat.init();
 					}
 				} catch (Exception ex) {

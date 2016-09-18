@@ -23,19 +23,63 @@ public class Chat {
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (scan.hasNextLine()) {
+			System.out.print("$>>> ");
 			input = scan.nextLine();
 
-			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
-			System.out.println();
+			if (input.startsWith(":")) {
+				processMacros(input);
+			} else {
+				connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+			}
 			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\n");
 		}
 	}
 
 	public void render(Peer peer, String message) {
-		System.out.print("$" + peer.getUuid().substring(0, 4) + "> " + message + "\n\n");
+		System.out.print("\n$" + peer.getUuid().substring(0, 4) + "> " + message + "\n");
 	}
 
 	public void render(String uuid, String message) {
 		System.out.print("\n$" + uuid.substring(0, 4) + "> " + message);
+	}
+
+	private void processMacros(String input) {
+		switch(input) {
+			case ":ayylmao:":
+				input = "                        .   *        .       .                \n" +
+						"         *      -0-\n" +
+						"            .                .  *       - )-\n" +
+						"         .      *       o       .       * \n" +
+						"   o                |\n" +
+						"             .     -O-    \n" +
+						"  .                 |        *      .     -0-\n" +
+						"         *  o     .    '       *      .        o\n" +
+						"                .         .        |      *\n" +
+						"     *             *              -O-          .\n" +
+						"           .             *         |     ,\n" +
+						"                  .           o\n" +
+						"          .---.\n" +
+						"    =   _/__~0_\\_     .  *            o       ' \n" +
+						"   = = (_________)             .            \n" +
+						"                   .                        *\n" +
+						"         *               - ) -       *      ";
+				break;
+
+			case ":floppy:":
+				input = "   __________\n" +
+						"     .'`   |     |`'.\n" +
+						"     |     '-----'  |\n" +
+						"     |              |\n" +
+						"     |  .--------.  |\n" +
+						"     |  |--------|  |\n" +
+						"     |  |--------|  |\n" +
+						"     |  |--------|  |\n" +
+						"     |  ;--------;  |\n" +
+						"     |__:________:__|";
+				break;
+		}
+		System.out.println(input);
+		connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+		System.out.print("$>>> ");
 	}
 }
