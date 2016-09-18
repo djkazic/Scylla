@@ -32,8 +32,8 @@ public class SocksClient {
 		if (remoteSocketChannel.read(buf) == -1) {
 			throw new IOException("Reached EOF / read timeout");
 		}
-		lastData = System.currentTimeMillis();
 		buf.flip();
+		lastData = System.currentTimeMillis();
 
 		//Peer being defined signifies that this is a hijacked SocksClient
 		if (peer != null) {
@@ -46,8 +46,10 @@ public class SocksClient {
 			// Simple local testing call
 			//System.out.println("newInboundData running in [LOCAL] mode");
 			if (overBuf == null) {
+				Utils.log(this, "Writing to clientSocketChannel with override buffer", false);
 				clientSocketChannel.write(buf);
 			} else {
+				Utils.log(this, "Writing to clientSocketChannel normally", false);
 				clientSocketChannel.write(overBuf);
 			}
 			//System.out.println(DatatypeConverter.printHexBinary((buf.array())));
@@ -55,7 +57,10 @@ public class SocksClient {
 	}
 
 	public void newOutboundData(Selector selector, String overAddr, int overPort, byte[] bufArr) throws Exception {
-		ByteBuffer overBuf = ByteBuffer.wrap(bufArr);
+		ByteBuffer overBuf = null;
+		if (bufArr != null) {
+			overBuf = ByteBuffer.wrap(bufArr);
+		}
 		if (!connected) {
 			// Allocate initial buffer
 			ByteBuffer inbuf = ByteBuffer.allocate(512);
@@ -142,10 +147,9 @@ public class SocksClient {
 			if (overBuf == null) {
 				ByteBuffer buf = ByteBuffer.allocate(1024);
 				if (clientSocketChannel.read(buf) == -1)
-					throw new IOException("Client disconnected");
+					Utils.log(this, "Error: client disconnected", false);
 				lastData = System.currentTimeMillis();
 				buf.flip();
-				//Utils.log(this, "HOOKED FOR OUTBOUND DATA: " + Arrays.toString(buf.array()), false);
 				remoteSocketChannel.write(buf);
 			} else {
 				System.out.println("Invalid override call for newOutboundData()");

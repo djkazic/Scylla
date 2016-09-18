@@ -144,7 +144,7 @@ public class DualListener extends Listener {
 									// Find a SocksClient to hijack
 									SocksClient socksClient = SOCKSProxy.getSocksClient();
 									socksClient.setPeer(foundPeer);
-									socksClient.newOutboundData(SOCKSProxy.threadSelect, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
+									socksClient.newOutboundData(SOCKSProxy.select, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}

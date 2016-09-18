@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class SOCKSProxy {
 	public static ArrayList <SocksClient> clients = new ArrayList<SocksClient>();
-	public static Selector threadSelect;
+	public static Selector select;
 
 	public static void main(String[] args) {
 		SOCKSProxy sp = new SOCKSProxy();
@@ -25,7 +25,8 @@ public class SOCKSProxy {
 			socks = ServerSocketChannel.open();
 			socks.socket().bind(new InetSocketAddress(8888));
 			socks.configureBlocking(false);
-			threadSelect = Selector.open();
+			select = Selector.open();
+			final Selector threadSelect = select;
 			socks.register(threadSelect, SelectionKey.OP_ACCEPT);
 
 			Utils.log(this, "Starting proxy thread...", false);
@@ -42,7 +43,7 @@ public class SOCKSProxy {
 								SelectionKey iterSelectionKey = (SelectionKey) iterator.next();
 
 								if (!iterSelectionKey.isValid()) {
-									System.out.println("SelectionKey invalid, skipping");
+									//System.out.println("SelectionKey invalid, skipping");
 									continue;
 								}
 
@@ -110,6 +111,7 @@ public class SOCKSProxy {
 		try {
 			//TODO: work on Peer assigning logic once we know that there is a purpose built SocksClient
 			// Organically generated SocksClient
+			Utils.log(this, "Organically generating SocksClient", false);
 			cl = new SocksClient(localSocketChannel);
 		} catch (IOException e) {
 			e.printStackTrace();
