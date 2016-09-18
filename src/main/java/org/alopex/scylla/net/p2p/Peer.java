@@ -2,6 +2,7 @@ package org.alopex.scylla.net.p2p;
 
 import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.core.Chat;
 import org.alopex.scylla.crypto.AES;
 import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.net.packets.Data;
@@ -25,6 +26,7 @@ public class Peer {
 
 	private PublicKey pubKey;
 	private AES aes;
+	private Chat chat;
 
 	public Peer(Connection connection, int direction) {
 		this.connection = connection;
@@ -79,6 +81,8 @@ public class Peer {
 					Utils.log(this, "Checking UUID...", false);
 					if (uuidCheck()) {
 						Utils.log(this, "Ready for data Tx/Rx.", false);
+						chat = new Chat(connection);
+						Utils.log(this, "Booted up chat connection", false);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -160,6 +164,10 @@ public class Peer {
 
 	public AES getAES() {
 		return aes;
+	}
+
+	public Chat getChat() {
+		return chat;
 	}
 
 	public CountDownLatch getPubKeyRecvLatch() {

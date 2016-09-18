@@ -94,15 +94,13 @@ public class DualListener extends Listener {
 						});
 						break;
 
-					case DataTypes.ARTICHOKE_DATA:
-						Utils.log(this, "RECV DATA for ARTICHOKE_DATA", false);
+					case DataTypes.CHAT_DATA:
+						Utils.log(this, "RECV DATA for CHAT_DATA", false);
 						replyPool.execute(new Runnable() {
 							public void run() {
 								try {
-									byte[] preByteBuffer = (byte[]) dataObject.getPayload();
-									Utils.log(this, "Parsed preByteBuffer data", false);
-									SocksClient socksClient = SOCKSProxy.getSocksClient(foundPeer);
-									socksClient.newInboundData(ByteBuffer.wrap(preByteBuffer));
+									String chatMessage = (String) dataObject.getPayload();
+									foundPeer.getChat().render(foundPeer, chatMessage);
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}
@@ -131,23 +129,6 @@ public class DualListener extends Listener {
 							public void run() {
 								connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.rsa.encrypt(Bootstrapper.selfUUID, foundPeer.getPubKey())));
 								Utils.log(this, "\tSent UUID back", false);
-							}
-						});
-						break;
-
-					case DataTypes.ARTICHOKE_REQS:
-						Utils.log(this, "RECV REQ for ARTICHOKE_DATA", false);
-						replyPool.execute(new Runnable() {
-							public void run() {
-								try {
-									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
-									// Find a SocksClient to hijack
-									SocksClient socksClient = SOCKSProxy.getSocksClient(null);
-									socksClient.setPeer(foundPeer);
-									socksClient.newOutboundData(SOCKSProxy.select, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
-								} catch (Exception ex) {
-									ex.printStackTrace();
-								}
 							}
 						});
 						break;
