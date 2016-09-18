@@ -14,14 +14,16 @@ import java.util.Scanner;
 public class Chat {
 
 	private Connection connection;
-	private Scanner scan;
+	private static Scanner scan;
 
 	public Chat(Connection connection) {
 		this.connection = connection;
 	}
 
 	public void init() {
-		scan = new Scanner(System.in);
+		if (scan == null) {
+			scan = new Scanner(System.in);
+		}
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (connection.isConnected() && scan.hasNextLine()) {
