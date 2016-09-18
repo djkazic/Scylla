@@ -131,9 +131,10 @@ public class ProxySocketHandler implements Runnable {
 		try {
 			if (intercept) {
 				Utils.log(this, "Intercepted data for serverOutputStream!", false);
-				final SOCKSRoute socksRoute = new SOCKSRoute(serverSocket.getInetAddress().toString(), serverSocket.getPort(), buffer);
+				final SOCKSRoute socksRoute = new SOCKSRoute(serverSocket.getInetAddress().getHostAddress(), serverSocket.getPort(), buffer);
 				DualListener.replyPool.execute(new Runnable() {
 					public void run() {
+						Utils.log(this, "Sending request for " + socksRoute.getDestinationIP() + " : " + socksRoute.getDestinationPort(), false);
 						Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_REQS, socksRoute));
 					}
 				});
@@ -256,7 +257,7 @@ public class ProxySocketHandler implements Runnable {
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
 				logClientData(dlen);
-				sendToServer(buffer, dlen, !exitNode);
+				sendToServer(buffer, dlen, true);
 			}
 
 			//---> Check for Server data <---
@@ -264,9 +265,7 @@ public class ProxySocketHandler implements Runnable {
 
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
-                Utils.log(this, "Checked serverData", false);
 				logServerData(dlen);
-                Utils.log(this, "\t exitNode boolean = " + exitNode, false);
 				if (exitNode) {
 					DualListener.replyPool.execute(new Runnable() {
 						public void run() {
