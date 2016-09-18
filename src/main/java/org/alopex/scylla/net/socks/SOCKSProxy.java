@@ -77,6 +77,7 @@ public class SOCKSProxy {
 											if (thisClient.remoteSocketChannel != null)
 												thisClient.remoteSocketChannel.close();
 											iterSelectionKey.cancel();
+											Utils.log(this, "Removing client " + clients.indexOf(thisClient), false);
 											clients.remove(thisClient);
 										}
 									}
