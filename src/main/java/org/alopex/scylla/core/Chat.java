@@ -21,9 +21,7 @@ public class Chat {
 	}
 
 	public void init() {
-		if (scan == null) {
-			scan = new Scanner(System.in);
-		}
+		scan = new Scanner(System.in);
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (connection.isConnected() && scan.hasNextLine()) {
