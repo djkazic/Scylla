@@ -136,7 +136,7 @@ public class SocksClient {
 				clientSocketChannel.write(out);
 			} else {
 				System.out.println("Opening override remoteSocketChannel @ " + overAddr + ":" + overPort);
-				remoteSocketChannel = SocketChannel.open(new InetSocketAddress(overAddr, overPort));
+				remoteSocketChannel = SocketChannel.open(new InetSocketAddress(overAddr.substring(1), overPort));
 
 				if (overBuf != null) {
 					System.out.println("newOutBound data running in [EXIT] mode");
