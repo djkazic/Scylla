@@ -86,6 +86,8 @@ public class Peer {
 						Utils.log(this, "Ready for data Tx/Rx.", false);
 						chat = new Chat(connection);
 						Utils.log(this, "Booted up chat connection", false);
+						Utils.log(this, "Initializing...\n>>>", false);
+						chat.init();
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
