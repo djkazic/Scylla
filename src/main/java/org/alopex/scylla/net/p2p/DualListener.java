@@ -139,6 +139,7 @@ public class DualListener extends Listener {
 							public void run() {
 								try {
 									InetAddress savedPeerAddr = foundPeer.getConnection().getRemoteAddressTCP().getAddress();
+									foundPeer.disconnect();
 									Thread.sleep(4000);
 									Utils.log(this, "Reattempting connection at " + savedPeerAddr, false);
 									NetBootstrapper.foundHosts.add(savedPeerAddr);
