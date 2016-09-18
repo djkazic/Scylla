@@ -113,8 +113,8 @@ public class SOCKSProxy {
 			// Organically generated SocksClient
 			Utils.log(this, "Organically generating SocksClient", false);
 			cl = new SocksClient(localSocketChannel);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return null;
 		}
 		clients.add(cl);
