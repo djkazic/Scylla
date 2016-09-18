@@ -21,11 +21,12 @@ public class Chat {
 	public void init() {
 		Scanner scan = new Scanner(System.in);
 		String input = "";
-		System.out.println();
+		System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (scan.hasNextLine()) {
 			input = scan.nextLine();
-			render(Bootstrapper.selfUUID.substring(0, 4), input + "\r\033[K");
+			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\r\033[K");
 			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+			System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		}
 	}
 
