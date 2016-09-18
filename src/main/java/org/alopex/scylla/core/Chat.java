@@ -21,20 +21,21 @@ public class Chat {
 	public void init() {
 		Scanner scan = new Scanner(System.in);
 		String input = "";
-		System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
+		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (scan.hasNextLine()) {
-			input = scan.nextLine();
-			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\r\033[K");
-			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
 			System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
+			input = scan.nextLine();
+
+			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\n");
 		}
 	}
 
 	public void render(Peer peer, String message) {
-		System.out.println("$" + peer.getUuid().substring(0, 4) + "> " + message);
+		System.out.println("$" + peer.getUuid().substring(0, 4) + "> " + message + "\n");
 	}
 
-	public void render(String user, String message) {
-		System.out.println("$" + user + "> " + message);
+	public void render(String uuid, String message) {
+		System.out.print("$" + uuid.substring(0, 4) + "> " + message);
 	}
 }
