@@ -75,7 +75,8 @@ public class SOCKSProxy {
 											//Utils.log(this, "DEBUG REMOTESC: " + thisClient.remoteSocketChannel.toString(), false);
 										} catch (Exception e) {
 											//TODO: objectify SocksClient MORE
-											thisClient.clientSocketChannel.close();
+											if (thisClient.clientSocketChannel != null)
+                                                thisClient.clientSocketChannel.close();
 											if (thisClient.remoteSocketChannel != null)
 												thisClient.remoteSocketChannel.close();
 											iterSelectionKey.cancel();
@@ -125,13 +126,12 @@ public class SOCKSProxy {
 	}
 
 	public static SocksClient getSocksClient() {
-		/**
-		 * for (int i=0; i < clients.size(); i++) {
-		 if (clients.get(i).getPeer() == null) {
-		 return clients.get(i);
-		 }
-		 }
-		 */
+        for (int i=0; i < clients.size(); i++) {
+            if (clients.get(i).getPeer() == null) {
+                return clients.get(i);
+            }
+        }
+
 		SocksClient sc = new SocksClient(null);
 		clients.add(sc);
 		return sc;
