@@ -68,10 +68,11 @@ public class SOCKSProxy {
 											if (iterSelectionKey.channel() == thisClient.clientSocketChannel) {
 												//TODO: implement outbound EXIT node call of this method
 												thisClient.newOutboundData(threadSelect, null, 0, null);
-											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel) {
+											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel
+													   || thisClient.remoteSocketChannel.isConnected()) {
 												thisClient.newInboundData(null);
 											}
-											Utils.log(this, "DEBUG REMOTESC: " + thisClient.remoteSocketChannel.toString(), false);
+											//Utils.log(this, "DEBUG REMOTESC: " + thisClient.remoteSocketChannel.toString(), false);
 										} catch (Exception e) {
 											//TODO: objectify SocksClient MORE
 											thisClient.clientSocketChannel.close();
