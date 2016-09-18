@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import org.alopex.scylla.net.p2p.Peer;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
+import org.alopex.scylla.utils.ASCII;
 
 import java.util.Scanner;
 
@@ -85,79 +86,23 @@ public class Chat {
 	private void processMacros(String input) {
 		switch(input) {
 			case ":ayylmao:":
-				input = "                        .   *        .       .                \n" +
-						"         *      -0-\n" +
-						"            .                .  *       - )-\n" +
-						"         .      *       o       .       * \n" +
-						"   o                |\n" +
-						"             .     -O-    \n" +
-						"  .                 |        *      .     -0-\n" +
-						"         *  o     .    '       *      .        o\n" +
-						"                .         .        |      *\n" +
-						"     *             *              -O-          .\n" +
-						"           .             *         |     ,\n" +
-						"                  .           o\n" +
-						"          .---.\n" +
-						"    =   _/__~0_\\_     .  *            o       ' \n" +
-						"   = = (_________)             .            \n" +
-						"                   .                        *\n" +
-						"         *               - ) -       *      ";
+				input = ASCII.ayylmao;
 				break;
 
 			case ":floppy:":
-				input = "   __________\n" +
-						"     .'`   |     |`'.\n" +
-						"     |     '-----'  |\n" +
-						"     |              |\n" +
-						"     |  .--------.  |\n" +
-						"     |  |--------|  |\n" +
-						"     |  |--------|  |\n" +
-						"     |  |--------|  |\n" +
-						"     |  ;--------;  |\n" +
-						"     |__:________:__|";
+				input = ASCII.floppy;
 				break;
 
 			case ":fatcat:":
-				input = "\n    /\\_____/\\\n" +
-						"   /  o   o  \\\n" +
-						"  ( ==  ^  == )\n" +
-						"   )         (\n" +
-						"  (           )\n" +
-						" ( (  )   (  ) )\n" +
-						"(__(__)___(__)__)";
+				input = ASCII.fatcat;
 				break;
 
 			case ":fsociety:":
-				input = "\ncddddddddddddddddddddddddddddddddddddddddddd;\n" +
-						"0Mo..........':ldkO0KKXXKK0kxoc,..........kMd\n" +
-						"0Ml......;d0WMMMMMMMMMMMMMMMMMMMWKx:......kMd\n" +
-						"0Ml...cOWMMMMMMMMMMMMMMMMMMMMMMMMMMMWO:...kMd\n" +
-						"0Ml.lNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNc.kMd\n" +
-						"0MdKMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0OMd\n" +
-						"0MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd\n" +
-						"0MxcxWMMMMMNXXNMMMMMMMMMMMMMMMNXXNMMMMMWkcKMd\n" +
-						"0Md..lMKo,.,'...:kWMMMMMMMNx;...',.;dXMl.'XMd\n" +
-						"0Mx'.,O;dXMMMXl....:dWMNo;....oXMMMKd;0,.'KMd\n" +
-						"0MO;.,NMWMMMMMMWk;...XMK...:OWMMMMMMWMN,.cNMd\n" +
-						"0MxxNMX;KMMKdcclkWN0WMMMN0WNxc:lxXMMk;WMXdKMd\n" +
-						"0MMMMMO;MMl.......KMXOMNkMk.......xMM.NMMMMMd\n" +
-						"0MMMMMMXKoclddl;.oWMdkMN,MN:.:ldolcdXNMMMMMMd\n" +
-						"0MMMMMMWXMMMMMMMW0KdoNMMdox0MMMMMMMMXMMMMMMMd\n" +
-						"0MMMMXc'WMMMMMMMMkcWMMMMMMkcMMMMMMMMN'lXMMMMd\n" +
-						"0MMMd..cMMMMMMMMNdoKMMMMM0x:XMMMMMMMM:..kMMMd\n" +
-						"0MM0....d0KKOd:.....c0Kx'.....:d0NX0l....NMMd\n" +
-						"0MMO.....................................WMMd\n" +
-						"0Mdkc...................................0kOMd\n" +
-						"0Ml.:Ol;........';;.......;,........':oX:.kMd\n" +
-						"0Ml..,WMMMMWWWo...';;:c::;'...:WWMMMMMW;..kMd\n" +
-						"0Ml...dMMMMMMMMKl...........c0MMMMMMMMd...kMd\n" +
-						"0Ml...cMMMMMMMMMMMXOxdddk0NMMMMMMMMMMM'...kMd\n" +
-						"0Ml....KMMMMMMMMMMMMMMMMMMMMMMMMMMMMMO....kMd\n" +
-						"0Ml.....OMMMMMMMMMMMMMMMMMMMMMMMMMMMK.....kMd\n" +
-						"0Ml......:XMMMMMMMMMMMMMMMMMMMMMMMNl......kMd\n" +
-						"0Ml........lXMMMMMMMMMMMMMMMMMMMKc........kMd\n" +
-						"0Ml..........:KMMMMMMMMMMMMMMM0,..........kMd\n" +
-						"oO:............xOOOx:'';dOOOOd............lOc";
+				input = ASCII.fsociety;
+				break;
+
+			case ":cake:":
+				input = ASCII.cake;
 				break;
 		}
 		System.out.println(input);
