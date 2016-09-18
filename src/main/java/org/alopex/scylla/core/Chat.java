@@ -28,6 +28,8 @@ public class Chat {
 
 			if (input.startsWith(":")) {
 				processMacros(input);
+			} else if (input.startsWith("/")) {
+				processCommands(input);
 			} else {
 				connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
 			}
@@ -41,6 +43,14 @@ public class Chat {
 
 	public void render(String uuid, String message) {
 		System.out.print("\n$" + uuid.substring(0, 4) + "> " + message);
+	}
+
+	private void processCommands(String input) {
+		switch(input) {
+			case "/dc":
+				Peer.findPeer(connection).disconnect();
+				break;
+		}
 	}
 
 	private void processMacros(String input) {
