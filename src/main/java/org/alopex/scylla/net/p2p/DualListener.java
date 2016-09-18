@@ -6,8 +6,6 @@ import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
-import org.alopex.scylla.net.socks.SOCKSProxy;
-import org.alopex.scylla.net.socks.SocksClient;
 import org.alopex.scylla.utils.Utils;
 
 import java.nio.ByteBuffer;
