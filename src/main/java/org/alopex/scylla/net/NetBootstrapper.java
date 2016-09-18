@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.net.p2p.DualListener;
+import org.alopex.scylla.net.p2p.SOCKSRoute;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.utils.Utils;
 
@@ -94,6 +95,7 @@ public class NetBootstrapper {
 	private void registerClasses(Kryo kryo) {
 		// Main Data object
 		kryo.register(Data.class);
+		kryo.register(SOCKSRoute.class);
 	}
 
 	public Server getServer() {

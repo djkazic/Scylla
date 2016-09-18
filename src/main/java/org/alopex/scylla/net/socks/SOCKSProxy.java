@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class SOCKSProxy {
 	public static ArrayList <SocksClient> clients = new ArrayList<SocksClient>();
+	public static Selector threadSelect;
 
 	public static void main(String[] args) {
 		SOCKSProxy sp = new SOCKSProxy();
@@ -24,7 +25,7 @@ public class SOCKSProxy {
 			socks = ServerSocketChannel.open();
 			socks.socket().bind(new InetSocketAddress(8888));
 			socks.configureBlocking(false);
-			final Selector threadSelect = Selector.open();
+			threadSelect = Selector.open();
 			socks.register(threadSelect, SelectionKey.OP_ACCEPT);
 
 			Utils.log(this, "Starting proxy thread...", false);
@@ -65,9 +66,9 @@ public class SOCKSProxy {
 											// Execute operations for either incoming / outgoing data
 											if (iterSelectionKey.channel() == thisClient.clientSocketChannel) {
 												//TODO: implement outbound EXIT node call of this method
-												thisClient.newOutboundData(threadSelect, iterSelectionKey, null, 0, null);
+												thisClient.newOutboundData(threadSelect, null, 0, null);
 											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel) {
-												thisClient.newInboundData();
+												thisClient.newInboundData(null);
 											}
 										} catch (Exception e) {
 											//TODO: objectify SocksClient MORE
@@ -116,5 +117,14 @@ public class SOCKSProxy {
 		}
 		clients.add(cl);
 		return cl;
+	}
+
+	public static SocksClient getSocksClient() {
+		for (int i=0; i < clients.size(); i++) {
+			if (clients.get(i).getPeer() == null) {
+				return clients.get(i);
+			}
+		}
+		return null;
 	}
 }

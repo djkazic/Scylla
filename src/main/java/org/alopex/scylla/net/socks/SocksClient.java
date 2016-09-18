@@ -1,6 +1,8 @@
 package org.alopex.scylla.net.socks;
 
 import org.alopex.scylla.net.p2p.Peer;
+import org.alopex.scylla.net.packets.Data;
+import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class SocksClient {
 		lastData = System.currentTimeMillis();
 	}
 
-	public void newInboundData() throws IOException {
+	public void newInboundData(ByteBuffer overBuf) throws IOException {
 		ByteBuffer buf = ByteBuffer.allocate(1024);
 		if (remoteSocketChannel.read(buf) == -1) {
 			throw new IOException("Reached EOF / read timeout");
@@ -33,21 +35,27 @@ public class SocksClient {
 		lastData = System.currentTimeMillis();
 		buf.flip();
 
-		//TODO: change from overBuf to Peer based
+		//Peer being defined signifies that this is a hijacked SocksClient
 		if (peer != null) {
 			//TODO: exit node implementation calls this modified method
 			Utils.log(this, "HOOK FOR PACKAGING ORGANIC RESPONSE TO PEER: " + peer, false);
+			peer.getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_DATA, buf.array()));
 			//System.out.println("newInboundData running in [EXIT] mode");
 			//clientSocketChannel.write(overBuf);
 		} else {
 			// Simple local testing call
 			//System.out.println("newInboundData running in [LOCAL] mode");
-			clientSocketChannel.write(buf);
+			if (overBuf == null) {
+				clientSocketChannel.write(buf);
+			} else {
+				clientSocketChannel.write(overBuf);
+			}
 			//System.out.println(DatatypeConverter.printHexBinary((buf.array())));
 		}
 	}
 
-	public void newOutboundData(Selector selector, SelectionKey sk, String overAddr, int overPort, ByteBuffer overBuf) throws Exception {
+	public void newOutboundData(Selector selector, String overAddr, int overPort, byte[] bufArr) throws Exception {
+		ByteBuffer overBuf = ByteBuffer.wrap(bufArr);
 		if (!connected) {
 			// Allocate initial buffer
 			ByteBuffer inbuf = ByteBuffer.allocate(512);
@@ -144,6 +152,10 @@ public class SocksClient {
 			}
 			// Write 1024 byte block to remoteSocketChannel
 		}
+	}
+
+	public Peer getPeer() {
+		return peer;
 	}
 
 	public void setPeer(Peer peer) {

@@ -6,8 +6,11 @@ import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
+import org.alopex.scylla.net.socks.SOCKSProxy;
+import org.alopex.scylla.net.socks.SocksClient;
 import org.alopex.scylla.utils.Utils;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -90,6 +93,23 @@ public class DualListener extends Listener {
 							}
 						});
 						break;
+
+					case DataTypes.ARTICHOKE_DATA:
+						Utils.log(this, "RECV DATA for ARTICHOKE_DATA", false);
+						replyPool.execute(new Runnable() {
+							public void run() {
+								try {
+									byte[] preByteBuffer = (byte[]) dataObject.getPayload();
+									Utils.log(this, "Parsed preByteBuffer data", false);
+									SocksClient socksClient = SOCKSProxy.getSocksClient();
+									socksClient.newInboundData(ByteBuffer.wrap(preByteBuffer));
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
+							}
+						});
+						break;
+
 				}
 			} else {
 				Utils.log(this, "REQ RECV from remote peer: " + foundPeer.getUuid(), false);
@@ -111,6 +131,23 @@ public class DualListener extends Listener {
 							public void run() {
 								connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.rsa.encrypt(Bootstrapper.selfUUID, foundPeer.getPubKey())));
 								Utils.log(this, "\tSent UUID back", false);
+							}
+						});
+						break;
+
+					case DataTypes.ARTICHOKE_REQS:
+						Utils.log(this, "RECV REQ for ARTICHOKE_DATA", false);
+						replyPool.execute(new Runnable() {
+							public void run() {
+								try {
+									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
+									// Find a SocksClient to hijack
+									SocksClient socksClient = SOCKSProxy.getSocksClient();
+									socksClient.setPeer(foundPeer);
+									socksClient.newOutboundData(SOCKSProxy.threadSelect, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
 							}
 						});
 						break;
