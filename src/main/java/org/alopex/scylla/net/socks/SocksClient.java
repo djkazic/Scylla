@@ -25,11 +25,15 @@ public class SocksClient {
 	InetAddress remoteAddr;
 	int remotePort;
 
-	public SocksClient(SocketChannel cs) throws IOException {
-		clientSocketChannel = cs;
-		clientSocketChannel.configureBlocking(false);
-		peer = null;
-		lastData = System.currentTimeMillis();
+	public SocksClient(SocketChannel cs) {
+		try {
+			clientSocketChannel = cs;
+			clientSocketChannel.configureBlocking(false);
+			peer = null;
+			lastData = System.currentTimeMillis();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void newInboundData(ByteBuffer overBuf) throws IOException {

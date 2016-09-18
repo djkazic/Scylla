@@ -127,6 +127,6 @@ public class SOCKSProxy {
 				return clients.get(i);
 			}
 		}
-		return null;
+		return new SocksClient(null);
 	}
 }
