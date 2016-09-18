@@ -24,11 +24,16 @@ public class Chat {
 		System.out.println();
 		while (scan.hasNextLine()) {
 			input = scan.nextLine();
+			render(Bootstrapper.selfUUID.substring(0, 4), input + "\r\033[K");
 			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
 		}
 	}
 
 	public void render(Peer peer, String message) {
-		System.out.println("$" + peer.getUuid().substring(0, 4) + " >" + message);
+		System.out.println("$" + peer.getUuid().substring(0, 4) + "> " + message);
+	}
+
+	public void render(String user, String message) {
+		System.out.println("$" + user + "> " + message);
 	}
 }
