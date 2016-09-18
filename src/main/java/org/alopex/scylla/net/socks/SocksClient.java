@@ -27,8 +27,10 @@ public class SocksClient {
 
 	public SocksClient(SocketChannel cs) {
 		try {
-			clientSocketChannel = cs;
-			clientSocketChannel.configureBlocking(false);
+			if (cs != null) {
+				clientSocketChannel = cs;
+				clientSocketChannel.configureBlocking(false);
+			}
 			peer = null;
 			lastData = System.currentTimeMillis();
 		} catch (Exception ex) {
