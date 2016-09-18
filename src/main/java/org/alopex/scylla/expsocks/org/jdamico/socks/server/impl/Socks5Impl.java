@@ -323,7 +323,7 @@ public class Socks5Impl extends Socks4Impl implements SocksCommonInterface {
 		
 		DebugLog.getInstance().println( "UDP Listen at: <"+MyIP.toString()+":"+MyPort+">" );
 
-		while( m_Parent.checkClientData(null) >= 0 )
+		while( m_Parent.checkClientData() >= 0 )
 		{
 			processUdp();
 			Thread.yield();

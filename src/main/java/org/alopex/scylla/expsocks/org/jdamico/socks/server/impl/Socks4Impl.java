@@ -307,7 +307,7 @@ public class Socks4Impl implements SocksCommonInterface {
 
 		while( socket == null )
 		{
-			if( m_Parent.checkClientData(null) >= 0 ) {
+			if( m_Parent.checkClientData() >= 0 ) {
 				DebugLog.getInstance().println( "BIND - Client connection closed" );
 				ssock.close();
 				return;

@@ -142,9 +142,11 @@ public class DualListener extends Listener {
 								try {
 									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
 									ProxySocketHandler psh = new ProxySocketHandler(null);
+                                    System.out.println("HOST: " + socksRoute.getDestinationIP());
 									psh.connectToServer(socksRoute.getDestinationIP(), socksRoute.getDestinationPort());
 									psh.exitNode = true;
 									psh.sendToServer(socksRoute.getSendBuffer(), socksRoute.getSendBuffer().length, false);
+                                    psh.relay();
 									// Find a SocksClient to hijack
 									//SocksClient socksClient = SOCKSProxy.getSocksClient(null);
 									//socksClient.setPeer(foundPeer);

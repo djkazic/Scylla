@@ -256,7 +256,7 @@ public class ProxySocketHandler implements Runnable {
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
 				logClientData(dlen);
-				sendToServer(buffer, dlen, true);
+				sendToServer(buffer, dlen, !exitNode);
 			}
 
 			//---> Check for Server data <---
@@ -264,7 +264,9 @@ public class ProxySocketHandler implements Runnable {
 
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
+                Utils.log(this, "Checked serverData", false);
 				logServerData(dlen);
+                Utils.log(this, "\t exitNode boolean = " + exitNode, false);
 				if (exitNode) {
 					DualListener.replyPool.execute(new Runnable() {
 						public void run() {
