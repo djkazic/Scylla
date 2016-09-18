@@ -3,7 +3,6 @@ package org.alopex.scylla.net.socks;
 import org.alopex.scylla.net.p2p.Peer;
 import org.alopex.scylla.utils.Utils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -11,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 
 public class SocksClient {
 	SocketChannel clientSocketChannel;
@@ -20,18 +18,14 @@ public class SocksClient {
 	long lastData = 0;
 	Peer peer;
 
-	public SocksClient(SocketChannel c) throws IOException {
-		clientSocketChannel = c;
+	public SocksClient(SocketChannel cs) throws IOException {
+		clientSocketChannel = cs;
 		clientSocketChannel.configureBlocking(false);
+		peer = null;
 		lastData = System.currentTimeMillis();
 	}
 
-	// Special SocksClient for exit nodes
-	public SocksClient(Peer p) {
-		peer = p;
-	}
-
-	public void newInboundData(Selector selector, SelectionKey sk, ByteBuffer overBuf) throws IOException {
+	public void newInboundData() throws IOException {
 		ByteBuffer buf = ByteBuffer.allocate(1024);
 		if (remoteSocketChannel.read(buf) == -1) {
 			throw new IOException("Reached EOF / read timeout");
@@ -39,15 +33,17 @@ public class SocksClient {
 		lastData = System.currentTimeMillis();
 		buf.flip();
 
-		if (overBuf != null) {
+		//TODO: change from overBuf to Peer based
+		if (peer != null) {
 			//TODO: exit node implementation calls this modified method
-			System.out.println("newInboundData running in [EXIT] mode");
-			clientSocketChannel.write(overBuf);
+			Utils.log(this, "HOOK FOR PACKAGING ORGANIC RESPONSE TO PEER: " + peer, false);
+			//System.out.println("newInboundData running in [EXIT] mode");
+			//clientSocketChannel.write(overBuf);
 		} else {
 			// Simple local testing call
-			System.out.println("newInboundData running in [LOCAL] mode");
+			//System.out.println("newInboundData running in [LOCAL] mode");
 			clientSocketChannel.write(buf);
-			System.out.println(DatatypeConverter.printHexBinary((buf.array())));
+			//System.out.println(DatatypeConverter.printHexBinary((buf.array())));
 		}
 	}
 
@@ -141,12 +137,16 @@ public class SocksClient {
 					throw new IOException("Client disconnected");
 				lastData = System.currentTimeMillis();
 				buf.flip();
-				Utils.log(this, "HOOKED FOR OUTBOUND DATA: " + Arrays.toString(buf.array()), false);
+				//Utils.log(this, "HOOKED FOR OUTBOUND DATA: " + Arrays.toString(buf.array()), false);
 				remoteSocketChannel.write(buf);
 			} else {
 				System.out.println("Invalid override call for newOutboundData()");
 			}
 			// Write 1024 byte block to remoteSocketChannel
 		}
+	}
+
+	public void setPeer(Peer peer) {
+		this.peer = peer;
 	}
 }

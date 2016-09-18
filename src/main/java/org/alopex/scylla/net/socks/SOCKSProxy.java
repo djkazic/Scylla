@@ -67,7 +67,7 @@ public class SOCKSProxy {
 												//TODO: implement outbound EXIT node call of this method
 												thisClient.newOutboundData(threadSelect, iterSelectionKey, null, 0, null);
 											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel) {
-												thisClient.newInboundData(threadSelect, iterSelectionKey, null);
+												thisClient.newInboundData();
 											}
 										} catch (Exception e) {
 											//TODO: objectify SocksClient MORE
@@ -103,10 +103,13 @@ public class SOCKSProxy {
 		}
 	}
 
-	public SocksClient addClient(SocketChannel s) {
+	// Populates pool organically
+	public SocksClient addClient(SocketChannel localSocketChannel) {
 		SocksClient cl;
 		try {
-			cl = new SocksClient(s);
+			//TODO: work on Peer assigning logic once we know that there is a purpose built SocksClient
+			// Organically generated SocksClient
+			cl = new SocksClient(localSocketChannel);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
