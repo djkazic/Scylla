@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  */
 public class DualListener extends Listener {
 
-	private static ExecutorService replyPool;
+	public static ExecutorService replyPool;
 	private int direction;
 
 	public DualListener(int direction) {

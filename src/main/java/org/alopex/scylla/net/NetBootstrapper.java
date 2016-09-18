@@ -94,6 +94,7 @@ public class NetBootstrapper {
 
 	private void registerClasses(Kryo kryo) {
 		// Main Data object
+		kryo.register(byte[].class);
 		kryo.register(Data.class);
 		kryo.register(SOCKSRoute.class);
 	}

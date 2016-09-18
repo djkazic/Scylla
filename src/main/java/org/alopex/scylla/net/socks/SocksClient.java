@@ -1,6 +1,9 @@
 package org.alopex.scylla.net.socks;
 
+import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.net.p2p.DualListener;
 import org.alopex.scylla.net.p2p.Peer;
+import org.alopex.scylla.net.p2p.SOCKSRoute;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
@@ -19,6 +22,8 @@ public class SocksClient {
 	boolean connected;
 	long lastData = 0;
 	Peer peer;
+	InetAddress remoteAddr;
+	int remotePort;
 
 	public SocksClient(SocketChannel cs) throws IOException {
 		clientSocketChannel = cs;
@@ -46,7 +51,6 @@ public class SocksClient {
 			// Simple local testing call
 			//System.out.println("newInboundData running in [LOCAL] mode");
 			if (overBuf == null) {
-				Utils.log(this, "Writing to clientSocketChannel with override buffer", false);
 				clientSocketChannel.write(buf);
 			} else {
 				Utils.log(this, "Writing to clientSocketChannel normally", false);
@@ -86,7 +90,7 @@ public class SocksClient {
 					throw new Exception("Incompatible SOCKS version [" + ver + ", " + cmd + "]");
 				}
 
-				final int port = inbuf.getShort();
+				remotePort = inbuf.getShort();
 				final byte ip[] = new byte[4];
 				inbuf.get(ip);
 
@@ -94,7 +98,7 @@ public class SocksClient {
 				while ((inbuf.get()) != 0) ;
 
 				// Remote address / hostname handling
-				InetAddress remoteAddr = InetAddress.getByAddress(ip);
+				remoteAddr = InetAddress.getByAddress(ip);
 				if (ip[0] == 0 && ip[1] == 0 && ip[2] == 0 && ip[3] != 0) {
 					String host = "";
 					byte b;
@@ -105,8 +109,8 @@ public class SocksClient {
 				}
 
 				//TODO: instead of opening a connection to remoteSocketChannel directly, have this handled by a client
-				System.out.println("Opening remoteSocketChannel @ " + remoteAddr + ":" + port);
-				remoteSocketChannel = SocketChannel.open(new InetSocketAddress(remoteAddr, port));
+				System.out.println("Opening remoteSocketChannel @ " + remoteAddr + ":" + remotePort);
+				remoteSocketChannel = SocketChannel.open(new InetSocketAddress(remoteAddr, remotePort));
 
 				//TODO: move away from exceptions
 				if (!remoteSocketChannel.isConnected())
@@ -128,10 +132,6 @@ public class SocksClient {
 				System.out.println("Opening override remoteSocketChannel @ " + overAddr + ":" + overPort);
 				remoteSocketChannel = SocketChannel.open(new InetSocketAddress(overAddr, overPort));
 
-				//TODO: move away from exceptions
-				if (!remoteSocketChannel.isConnected())
-					throw new IOException("connect failed");
-
 				if (overBuf != null) {
 					System.out.println("newOutBound data running in [EXIT] mode");
 					//TODO: intercept buf, have it sent to a client elsewhere
@@ -150,7 +150,15 @@ public class SocksClient {
 					Utils.log(this, "Error: client disconnected", false);
 				lastData = System.currentTimeMillis();
 				buf.flip();
-				remoteSocketChannel.write(buf);
+				final SOCKSRoute socksRoute = new SOCKSRoute(remoteAddr.toString(), remotePort, buf.array());
+				Utils.log(this, "TEST REQUEST TO PEER 0: ", false);
+				DualListener.replyPool.execute(new Runnable() {
+					public void run() {
+						Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_REQS, socksRoute));
+					}
+				});
+				Utils.log(this, "SUCCESSFUL REQUEST TO PEER 0 = ", false);
+				//remoteSocketChannel.write(buf);
 			} else {
 				System.out.println("Invalid override call for newOutboundData()");
 			}
