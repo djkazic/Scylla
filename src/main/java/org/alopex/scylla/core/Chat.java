@@ -26,7 +26,7 @@ public class Chat {
 		}
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
-		while (connection.isConnected() && scan.hasNextLine()) {
+		while (scan.hasNextLine()) {
 			System.out.print("$>>> ");
 			input = scan.nextLine();
 
