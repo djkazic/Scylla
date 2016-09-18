@@ -132,6 +132,8 @@ public class SOCKSProxy {
 		 }
 		 }
 		 */
-		return new SocksClient(null);
+		SocksClient sc = new SocksClient(null);
+		clients.add(sc);
+		return sc;
 	}
 }
