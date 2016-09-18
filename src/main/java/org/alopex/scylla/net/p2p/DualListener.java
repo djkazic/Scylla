@@ -4,10 +4,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.RSA;
+import org.alopex.scylla.net.NetBootstrapper;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -126,6 +129,22 @@ public class DualListener extends Listener {
 							public void run() {
 								connection.sendTCP(new Data(DataTypes.UUID_DATA, Bootstrapper.rsa.encrypt(Bootstrapper.selfUUID, foundPeer.getPubKey())));
 								Utils.log(this, "\tSent UUID back", false);
+							}
+						});
+						break;
+
+					case DataTypes.REINSTANCE_REQS:
+						Utils.log(this, "RECV REQ for REINSTANCE", false);
+						replyPool.execute(new Runnable() {
+							public void run() {
+								try {
+									InetAddress savedPeerAddr = foundPeer.getConnection().getRemoteAddressTCP().getAddress();
+									Thread.sleep(4000);
+									Utils.log(this, "Reattempting connection at " + savedPeerAddr, false);
+									NetBootstrapper.foundHosts.add(savedPeerAddr);
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
 							}
 						});
 						break;

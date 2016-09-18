@@ -13,4 +13,5 @@ public class DataTypes {
 
 	public static final byte CHAT_DATA = 0x06;
 
+	public static final byte REINSTANCE_REQS = 0x07;
 }

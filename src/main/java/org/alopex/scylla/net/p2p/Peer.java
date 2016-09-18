@@ -13,6 +13,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 public class Peer {
@@ -204,5 +205,11 @@ public class Peer {
 			}
 		}
 		return null;
+	}
+
+	public void reinstance() {
+		connection.sendTCP(new Data(DataTypes.REINSTANCE_REQS, null));
+		Utils.log(this, "Reinstancing with peer " + uuid, false);
+		Bootstrapper.selfUUID = UUID.randomUUID().toString();
 	}
 }
