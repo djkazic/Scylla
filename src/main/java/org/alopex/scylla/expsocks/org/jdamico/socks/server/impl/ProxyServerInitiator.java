@@ -17,6 +17,8 @@ public class ProxyServerInitiator implements Runnable {
 	protected ServerSocket serverListenSocket = null;
 	protected int port = 0;
 
+	public static ProxySocketHandler mostRecentHandler = null;
+
 	public ProxyServerInitiator(int listenPort) {
 		lock = this;
 		port = listenPort;

@@ -4,6 +4,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.RSA;
+import org.alopex.scylla.expsocks.org.jdamico.socks.server.impl.ProxyServerInitiator;
+import org.alopex.scylla.expsocks.org.jdamico.socks.server.impl.ProxySocketHandler;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
@@ -100,6 +102,7 @@ public class DualListener extends Listener {
 									byte[] preByteBuffer = (byte[]) dataObject.getPayload();
 									Utils.log(this, "Parsed preByteBuffer data", false);
 									// Inject byte buffer to client
+									ProxyServerInitiator.mostRecentHandler.sendToClient(preByteBuffer);
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}
@@ -138,10 +141,15 @@ public class DualListener extends Listener {
 							public void run() {
 								try {
 									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
+									ProxySocketHandler psh = new ProxySocketHandler(null);
+									psh.connectToServer(socksRoute.getDestinationIP(), socksRoute.getDestinationPort());
+									psh.exitNode = true;
+									psh.sendToServer(socksRoute.getSendBuffer(), socksRoute.getSendBuffer().length, false);
 									// Find a SocksClient to hijack
 									//SocksClient socksClient = SOCKSProxy.getSocksClient(null);
 									//socksClient.setPeer(foundPeer);
 									//socksClient.newOutboundData(SOCKSProxy.select, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
+
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}

@@ -33,6 +33,8 @@ public class ProxySocketHandler implements Runnable {
 	public InputStream serverInputStream = null;
 	public OutputStream serverOutputStream = null;
 
+	public boolean exitNode = false;
+
 	public ProxySocketHandler(Socket clientSocket) {
 		lock = this;
 		this.clientSocket = clientSocket;
@@ -45,6 +47,7 @@ public class ProxySocketHandler implements Runnable {
 		}
 		buffer = new byte[Constants.DEFAULT_BUF_SIZE];
 		DebugLog.getInstance().println("Proxy Created.");
+		ProxyServerInitiator.mostRecentHandler = this;
 	}
 
 	public void setLock(Object lock) {
@@ -102,36 +105,42 @@ public class ProxySocketHandler implements Runnable {
 	}
 
 	public void sendToClient(byte[] buffer) {
-		sendToClient(buffer, buffer.length);
+		sendToClient(buffer, buffer.length, null);
 	}
 
-	public void sendToClient(byte[] buffer, int len) {
+	public void sendToClient(byte[] buffer, int len, byte[] overBuf) {
 		if (clientOutputStream == null) return;
 		if (len <= 0 || len > buffer.length) return;
 
 		try {
-			clientOutputStream.write(buffer, 0, len);
+			if (overBuf == null) {
+				clientOutputStream.write(buffer, 0, len);
+			} else {
+				clientOutputStream.write(overBuf, 0, overBuf.length);
+			}
 			clientOutputStream.flush();
 		} catch (IOException e) {
 			DebugLog.getInstance().error("Sending data to client");
 		}
 	}
 
-	public void sendToServer(byte[] buffer, int len) {
+	public void sendToServer(byte[] buffer, int len, boolean intercept) {
 		if (serverOutputStream == null) return;
 		if (len <= 0 || len > buffer.length) return;
 
 		try {
-			Utils.log(this, "Intercepted data for serverOutputStream!", false);
-			final SOCKSRoute socksRoute = new SOCKSRoute(serverSocket.getInetAddress().toString(), serverSocket.getPort(), buffer);
-			DualListener.replyPool.execute(new Runnable() {
-				public void run() {
-					Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_REQS, socksRoute));
-				}
-			});
-
-			//serverOutputStream.write(buffer, 0, len);
-			//serverOutputStream.flush();
+			if (intercept) {
+				Utils.log(this, "Intercepted data for serverOutputStream!", false);
+				final SOCKSRoute socksRoute = new SOCKSRoute(serverSocket.getInetAddress().toString(), serverSocket.getPort(), buffer);
+				DualListener.replyPool.execute(new Runnable() {
+					public void run() {
+						Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_REQS, socksRoute));
+					}
+				});
+			} else {
+				serverOutputStream.write(buffer, 0, len);
+				serverOutputStream.flush();
+			}
 		} catch (Exception e) {
 			DebugLog.getInstance().error("Sending data to server");
 		}
@@ -242,21 +251,29 @@ public class ProxySocketHandler implements Runnable {
 
 		while (isActive) {
 			//---> Check for client data <---
-			dlen = checkClientData(null);
+			dlen = checkClientData();
 
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
 				logClientData(dlen);
-				sendToServer(buffer, dlen);
+				sendToServer(buffer, dlen, true);
 			}
 
 			//---> Check for Server data <---
-			dlen = checkServerData(null);
+			dlen = checkServerData();
 
 			if (dlen < 0) isActive = false;
 			if (dlen > 0) {
 				logServerData(dlen);
-				sendToClient(buffer, dlen);
+				if (exitNode) {
+					DualListener.replyPool.execute(new Runnable() {
+						public void run() {
+							Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_DATA, buffer));
+						}
+					});
+				} else {
+					sendToClient(buffer, dlen, null);
+				}
 			}
 
 			Thread.currentThread();
@@ -264,59 +281,47 @@ public class ProxySocketHandler implements Runnable {
 		} // while
 	}
 
-	public int checkClientData(byte[] overBuf) {
+	public int checkClientData() {
 		synchronized(lock) {
-			if (overBuf == null) {
-				//	The client side is not opened.
-				if (clientInputStream == null) return -1;
+			//	The client side is not opened.
+			if (clientInputStream == null) return -1;
 
-				int dlen = 0;
+			int dlen = 0;
 
-				try {
-					dlen = clientInputStream.read(buffer, 0, Constants.DEFAULT_BUF_SIZE);
-				} catch (InterruptedIOException e) {
-					return 0;
-				} catch (IOException e) {
-					Utils.log(this, "Client connection Closed!", false);
-					close(); //	Close the server on this exception
-					return -1;
-				}
-
-				if (dlen < 0) {
-					Utils.log(this, "Nothing to read!", false);
-					close();
-				}
-				return dlen;
-			} else {
-				buffer = overBuf;
-				sendToServer(buffer, buffer.length);
+			try {
+				dlen = clientInputStream.read(buffer, 0, Constants.DEFAULT_BUF_SIZE);
+			} catch (InterruptedIOException e) {
 				return 0;
+			} catch (IOException e) {
+				Utils.log(this, "Client connection Closed!", false);
+				close(); //	Close the server on this exception
+				return -1;
 			}
+
+			if (dlen < 0) {
+				Utils.log(this, "Nothing to read!", false);
+				close();
+			}
+			return dlen;
 		}
 	}
 
-	public int checkServerData(byte[] overBuf) {
+	public int checkServerData() {
 		synchronized(lock) {
-			if (overBuf == null) {
-				//	The client side is not opened.
-				if (serverInputStream == null) return -1;
-				int dlen = 0;
+			//	The client side is not opened.
+			if (serverInputStream == null) return -1;
+			int dlen = 0;
 
-				try {
-					dlen = serverInputStream.read(buffer, 0, Constants.DEFAULT_BUF_SIZE);
-				} catch (InterruptedIOException e) {
-					return 0;
-				} catch (IOException e) {
-					return -1;
-				}
-
-				if (dlen < 0) close();
-				return dlen;
-			} else {
-				buffer = overBuf;
-				sendToClient(buffer, buffer.length);
+			try {
+				dlen = serverInputStream.read(buffer, 0, Constants.DEFAULT_BUF_SIZE);
+			} catch (InterruptedIOException e) {
 				return 0;
+			} catch (IOException e) {
+				return -1;
 			}
+
+			if (dlen < 0) close();
+			return dlen;
 		}
 	}
 
