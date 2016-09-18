@@ -123,11 +123,13 @@ public class SOCKSProxy {
 	}
 
 	public static SocksClient getSocksClient() {
-		for (int i=0; i < clients.size(); i++) {
-			if (clients.get(i).getPeer() == null) {
-				return clients.get(i);
-			}
-		}
+		/**
+		 * for (int i=0; i < clients.size(); i++) {
+		 if (clients.get(i).getPeer() == null) {
+		 return clients.get(i);
+		 }
+		 }
+		 */
 		return new SocksClient(null);
 	}
 }
