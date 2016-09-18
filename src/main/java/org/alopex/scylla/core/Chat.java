@@ -14,16 +14,17 @@ import java.util.Scanner;
 public class Chat {
 
 	private Connection connection;
+	private Scanner scan;
 
 	public Chat(Connection connection) {
 		this.connection = connection;
 	}
 
 	public void init() {
-		Scanner scan = new Scanner(System.in);
+		scan = new Scanner(System.in);
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
-		while (scan.hasNextLine()) {
+		while (connection.isConnected() && scan.hasNextLine()) {
 			System.out.print("$>>> ");
 			input = scan.nextLine();
 
@@ -112,5 +113,9 @@ public class Chat {
 		System.out.println(input);
 		connection.sendTCP(new Data(DataTypes.CHAT_DATA, Bootstrapper.aes.encrypt(input)));
 		System.out.print("$>>> ");
+	}
+
+	public void shutdown() {
+		scan.close();
 	}
 }
