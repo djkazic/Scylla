@@ -267,11 +267,7 @@ public class ProxySocketHandler implements Runnable {
 			if (dlen > 0) {
 				logServerData(dlen);
 				if (exitNode) {
-					DualListener.replyPool.execute(new Runnable() {
-						public void run() {
-							Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_DATA, buffer));
-						}
-					});
+
 				} else {
 					sendToClient(buffer, dlen, null);
 				}

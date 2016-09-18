@@ -10,6 +10,11 @@ import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
 import org.alopex.scylla.utils.Utils;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -141,12 +146,33 @@ public class DualListener extends Listener {
 							public void run() {
 								try {
 									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
-									ProxySocketHandler psh = new ProxySocketHandler(null);
-                                    System.out.println("HOST: " + socksRoute.getDestinationIP());
-									psh.connectToServer(socksRoute.getDestinationIP(), socksRoute.getDestinationPort());
-									psh.exitNode = true;
-									psh.sendToServer(socksRoute.getSendBuffer(), socksRoute.getSendBuffer().length, false);
-                                    psh.relay();
+									/**
+									 * SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
+									 ProxySocketHandler psh = new ProxySocketHandler(null);
+									 System.out.println("HOST: " + socksRoute.getDestinationIP());
+									 psh.connectToServer(socksRoute.getDestinationIP(), socksRoute.getDestinationPort());
+									 psh.exitNode = true;
+									 psh.sendToServer(socksRoute.getSendBuffer(), socksRoute.getSendBuffer().length, false);
+									 psh.relay();
+									 */
+									Socket representativeSocket = new Socket(socksRoute.getDestinationIP(), socksRoute.getDestinationPort());
+									OutputStream rso = representativeSocket.getOutputStream();
+									DataOutputStream dos = new DataOutputStream(rso);
+									dos.writeInt(socksRoute.getSendBuffer().length);
+									dos.write(socksRoute.getSendBuffer(), 0, socksRoute.getSendBuffer().length);
+
+									InputStream rsi = representativeSocket.getInputStream();
+									DataInputStream dis = new DataInputStream(rsi);
+									int recvLen = dis.readInt();
+									byte[] recvData = new byte[recvLen];
+									dis.readFully(recvData);
+									final byte[] sendRecvData = recvData;
+									DualListener.replyPool.execute(new Runnable() {
+										public void run() {
+											Bootstrapper.peers.get(0).getConnection().sendTCP(new Data(DataTypes.ARTICHOKE_DATA, sendRecvData));
+										}
+									});
+
 									// Find a SocksClient to hijack
 									//SocksClient socksClient = SOCKSProxy.getSocksClient(null);
 									//socksClient.setPeer(foundPeer);
