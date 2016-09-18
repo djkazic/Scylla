@@ -40,7 +40,7 @@ public class SocksClient {
 
 	public void newInboundData(ByteBuffer overBuf) throws IOException {
 		ByteBuffer buf = ByteBuffer.allocate(1024);
-		if (remoteSocketChannel.read(buf) == -1) {
+		if (remoteSocketChannel != null && remoteSocketChannel.read(buf) == -1) {
 			throw new IOException("Reached EOF / read timeout");
 		}
 		buf.flip();

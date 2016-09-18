@@ -1,5 +1,6 @@
 package org.alopex.scylla.net.socks;
 
+import org.alopex.scylla.net.p2p.Peer;
 import org.alopex.scylla.utils.Utils;
 
 import java.nio.channels.*;
@@ -69,7 +70,7 @@ public class SOCKSProxy {
 												//TODO: implement outbound EXIT node call of this method
 												thisClient.newOutboundData(threadSelect, null, 0, null);
 											} else if (iterSelectionKey.channel() == thisClient.remoteSocketChannel
-													   || thisClient.remoteSocketChannel.isConnected()) {
+													   || (thisClient.remoteSocketChannel != null && thisClient.remoteSocketChannel.isConnected())) {
 												thisClient.newInboundData(null);
 											}
 											//Utils.log(this, "DEBUG REMOTESC: " + thisClient.remoteSocketChannel.toString(), false);
@@ -82,6 +83,7 @@ public class SOCKSProxy {
 											iterSelectionKey.cancel();
 											Utils.log(this, "Removing client " + clients.indexOf(thisClient), false);
 											clients.remove(thisClient);
+											e.printStackTrace();
 										}
 									}
 								}
@@ -125,15 +127,20 @@ public class SOCKSProxy {
 		return cl;
 	}
 
-	public static SocksClient getSocksClient() {
-        for (int i=0; i < clients.size(); i++) {
-            if (clients.get(i).getPeer() == null) {
-                return clients.get(i);
-            }
-        }
-
-		SocksClient sc = new SocksClient(null);
-		clients.add(sc);
+	public static SocksClient getSocksClient(Peer peer) {
+		SocksClient sc = null;
+		if (peer == null) {
+			sc = new SocksClient(null);
+			clients.add(sc);
+			return sc;
+		} else {
+			for (int i=0; i < clients.size(); i++) {
+				if (clients.get(i).getPeer().equals(peer)) {
+					sc = clients.get(i);
+					break;
+				}
+			}
+		}
 		return sc;
 	}
 }
