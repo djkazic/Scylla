@@ -104,6 +104,10 @@ public class Chat {
 			case ":cake:":
 				input = ASCII.cake;
 				break;
+
+			case ":atari:":
+				input = ASCII.atari;
+				break;
 		}
 		System.out.println(input);
 		connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
