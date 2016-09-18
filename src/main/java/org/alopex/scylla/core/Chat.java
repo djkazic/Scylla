@@ -26,7 +26,7 @@ public class Chat {
 		}
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
-		while (scan.hasNextLine()) {
+		while (connection.isConnected() && scan.hasNextLine()) {
 			System.out.print("$>>> ");
 			input = scan.nextLine();
 
@@ -39,6 +39,7 @@ public class Chat {
 			}
 			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\n");
 		}
+		scan.close();
 	}
 
 	public void render(Peer peer, String message) {
