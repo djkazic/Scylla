@@ -39,7 +39,7 @@ public class Chat {
 	}
 
 	public void render(Peer peer, String message) {
-		System.out.print("\n$" + peer.getUuid().substring(0, 4) + "> " + message + "\n");
+		System.out.print("\n$" + peer.getUuid().substring(0, 4) + "> " + message + "\n$>>> ");
 	}
 
 	public void render(String uuid, String message) {
