@@ -1,9 +1,9 @@
 package org.alopex.scylla.core;
 
 import org.alopex.scylla.crypto.RSA;
+import org.alopex.scylla.expsocks.org.jdamico.socks.server.impl.ProxyServerInitiator;
 import org.alopex.scylla.net.NetBootstrapper;
 import org.alopex.scylla.net.p2p.Peer;
-import org.alopex.scylla.net.socks.SOCKSProxy;
 import org.alopex.scylla.utils.Utils;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class Bootstrapper {
 
 	//TODO: change to dynamically loaded Config
 	public static Config config = new Config();
-	public static SOCKSProxy socksProxy;
+	//public static SOCKSProxy socksProxy;
 
 	public static NetBootstrapper netBootstrapper;
 
@@ -38,8 +38,7 @@ public class Bootstrapper {
 			selfUUID = UUID.randomUUID().toString();
 
 			Utils.log(CLASS_NAME, "Initializing SOCKSProxy instance...", false);
-			socksProxy = new SOCKSProxy();
-			socksProxy.init();
+			new ProxyServerInitiator(8888).start();
 
 			Utils.log(CLASS_NAME, "Bootstrapping P2P networking engine...", false);
 			netBootstrapper = new NetBootstrapper();

@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import org.alopex.scylla.core.Bootstrapper;
+import org.alopex.scylla.net.p2p.ArtichokeListener;
 import org.alopex.scylla.net.p2p.DualListener;
 import org.alopex.scylla.net.p2p.SOCKSRoute;
 import org.alopex.scylla.net.packets.Data;
@@ -82,6 +83,7 @@ public class NetBootstrapper {
 		registerClasses(client.getKryo());
 		Utils.log(this, "Registering client listeners...", false);
 		client.addListener(new DualListener(0));
+		client.addListener(new ArtichokeListener());
 		client.start();
 	}
 
@@ -89,6 +91,7 @@ public class NetBootstrapper {
 		registerClasses(server.getKryo());
 		Utils.log(this, "Registering server listeners...", false);
 		server.addListener(new DualListener(1));
+		server.addListener(new ArtichokeListener());
 		// DO NOT CALL server.start()
 	}
 

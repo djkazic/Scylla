@@ -6,8 +6,6 @@ import org.alopex.scylla.core.Bootstrapper;
 import org.alopex.scylla.crypto.RSA;
 import org.alopex.scylla.net.packets.Data;
 import org.alopex.scylla.net.packets.DataTypes;
-import org.alopex.scylla.net.socks.SOCKSProxy;
-import org.alopex.scylla.net.socks.SocksClient;
 import org.alopex.scylla.utils.Utils;
 
 import java.nio.ByteBuffer;
@@ -101,8 +99,7 @@ public class DualListener extends Listener {
 								try {
 									byte[] preByteBuffer = (byte[]) dataObject.getPayload();
 									Utils.log(this, "Parsed preByteBuffer data", false);
-									SocksClient socksClient = SOCKSProxy.getSocksClient(foundPeer);
-									socksClient.newInboundData(ByteBuffer.wrap(preByteBuffer));
+									// Inject byte buffer to client
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}
@@ -142,9 +139,9 @@ public class DualListener extends Listener {
 								try {
 									SOCKSRoute socksRoute = (SOCKSRoute) dataObject.getPayload();
 									// Find a SocksClient to hijack
-									SocksClient socksClient = SOCKSProxy.getSocksClient(null);
-									socksClient.setPeer(foundPeer);
-									socksClient.newOutboundData(SOCKSProxy.select, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
+									//SocksClient socksClient = SOCKSProxy.getSocksClient(null);
+									//socksClient.setPeer(foundPeer);
+									//socksClient.newOutboundData(SOCKSProxy.select, socksRoute.getDestinationIP(), socksRoute.getDestinationPort(), socksRoute.getSendBuffer());
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}
