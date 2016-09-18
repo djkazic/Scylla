@@ -143,6 +143,7 @@ public class DualListener extends Listener {
 									Thread.sleep(4000);
 									Utils.log(this, "Reattempting connection at " + savedPeerAddr, false);
 									NetBootstrapper.foundHosts.add(savedPeerAddr);
+									Bootstrapper.netBootstrapper.attemptConnections();
 								} catch (Exception ex) {
 									ex.printStackTrace();
 								}

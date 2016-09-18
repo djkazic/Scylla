@@ -38,7 +38,7 @@ public class NetBootstrapper {
 		}
 	}
 
-	private void attemptConnections() {
+	public void attemptConnections() {
 		try {
 			Client newConnection = null;
 			for (int i=0; i < foundHosts.size(); i++) {
