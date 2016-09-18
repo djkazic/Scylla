@@ -99,7 +99,7 @@ public class DualListener extends Listener {
 						replyPool.execute(new Runnable() {
 							public void run() {
 								try {
-									String chatMessage = (String) dataObject.getPayload();
+									String chatMessage = foundPeer.getAES().decrypt((String) dataObject.getPayload());
 									foundPeer.getChat().render(foundPeer, chatMessage);
 								} catch (Exception ex) {
 									ex.printStackTrace();

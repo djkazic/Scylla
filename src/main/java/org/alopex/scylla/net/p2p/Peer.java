@@ -210,6 +210,11 @@ public class Peer {
 	public void reinstance() {
 		connection.sendTCP(new Data(DataTypes.REINSTANCE_REQS, null));
 		Utils.log(this, "Reinstancing with peer " + uuid, false);
-		Bootstrapper.selfUUID = UUID.randomUUID().toString();
+		try {
+			Bootstrapper.selfUUID = UUID.randomUUID().toString();
+			Bootstrapper.aes = new AES(Bootstrapper.selfUUID);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

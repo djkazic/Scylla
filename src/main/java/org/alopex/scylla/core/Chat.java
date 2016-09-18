@@ -32,7 +32,7 @@ public class Chat {
 			} else if (input.startsWith("/")) {
 				processCommands(input);
 			} else {
-				connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+				connection.sendTCP(new Data(DataTypes.CHAT_DATA, Bootstrapper.aes.encrypt(input)));
 			}
 			//render(Bootstrapper.selfUUID.substring(0, 4), input + "\n");
 		}
@@ -110,7 +110,7 @@ public class Chat {
 				break;
 		}
 		System.out.println(input);
-		connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
+		connection.sendTCP(new Data(DataTypes.CHAT_DATA, Bootstrapper.aes.encrypt(input)));
 		System.out.print("$>>> ");
 	}
 }
