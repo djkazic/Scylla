@@ -23,7 +23,6 @@ public class Chat {
 		String input = "";
 		//System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 		while (scan.hasNextLine()) {
-			System.out.print("$" + Bootstrapper.selfUUID.substring(0, 4) + "> ");
 			input = scan.nextLine();
 
 			connection.sendTCP(new Data(DataTypes.CHAT_DATA, input));
