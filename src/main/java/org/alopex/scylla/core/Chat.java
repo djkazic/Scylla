@@ -114,8 +114,4 @@ public class Chat {
 		connection.sendTCP(new Data(DataTypes.CHAT_DATA, Bootstrapper.aes.encrypt(input)));
 		System.out.print("$>>> ");
 	}
-
-	public void shutdown() {
-		scan.close();
-	}
 }
